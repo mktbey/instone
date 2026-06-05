@@ -338,6 +338,15 @@ button { font-family: inherit; }
 
 /* fly-to-cart clone */
 .fly-ic { position: fixed; z-index: 300; pointer-events: none; transition: transform .7s cubic-bezier(.5,-0.3,.7,1), opacity .7s; }
+.fly-dot{
+  position:fixed; z-index:400; pointer-events:none;
+  width:26px; height:26px; border-radius:50%;
+  background:var(--bey-blue); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:800; line-height:1;
+  box-shadow:0 6px 16px rgba(60,87,225,.45);
+  transition:transform .6s cubic-bezier(.5,-0.2,.3,1), opacity .6s ease;
+}
 
 /* footer */
 .foot { background: var(--bey-navy); color: rgba(255,255,255,0.8); padding: 40px; text-align: center; font-size: 13px; }
@@ -756,7 +765,7 @@ function renderXLOptions(){
   $('xlOpts').innerHTML = p.options.map(o=>{
     const checked=sel.includes(o.id);
     return `<label class="opt-row ${checked?'on':''}">
-      <input type="checkbox" ${checked?'checked':''} onchange="toggleOption('${p.id}','${o.id}')">
+      <input type="checkbox" ${checked?'checked':''} onchange="toggleOption('${p.id}','${o.id}', event)">
       <span class="opt-main"><span class="opt-title">${o.title}</span><span class="opt-desc">${o.desc}</span></span>
       <span class="opt-price">+ ${fmt(o.price)}</span>
     </label>`;
@@ -796,10 +805,12 @@ function addToCart(id, ev){
   updateCartUI();
   setStep(2);
 }
-function toggleOption(pkgId, optId){
-  if(!cart[pkgId]) selectOnly(pkgId);   // Option wählen wählt dieses Paket exklusiv aus
+function toggleOption(pkgId, optId, ev){
+  if(!cart[pkgId]) selectOnly(pkgId);
+  const willAdd = !cart[pkgId].opts[optId];
   cart[pkgId].opts[optId] = !cart[pkgId].opts[optId];
   if(!cart[pkgId].opts[optId]) delete cart[pkgId].opts[optId];
+  if(willAdd && ev && ev.target){ flyToCartFrom(ev.target.closest('.opt-row')); }
   refreshXL();
   renderCart();
   updateCartUI();
@@ -860,6 +871,28 @@ function closeCart(){ $('drawer').classList.remove('open'); $('backdrop').classL
 function closeAll(){ closeCart(); }
 
 /* fly-to-cart Animation */
+function flyToCartFrom(srcEl){
+  const cartBtn = document.getElementById('cartBtn');
+  if(!srcEl || !cartBtn) return;
+  const s = srcEl.getBoundingClientRect();
+  const c = cartBtn.getBoundingClientRect();
+  const dot = document.createElement('div');
+  dot.className = 'fly-dot';
+  dot.textContent = '+';
+  dot.style.left = (s.left + s.width - 30) + 'px';
+  dot.style.top  = (s.top + s.height/2 - 13) + 'px';
+  document.body.appendChild(dot);
+  requestAnimationFrame(()=>{
+    const dx = (c.left + c.width/2) - (s.left + s.width - 17);
+    const dy = (c.top + c.height/2) - (s.top + s.height/2);
+    dot.style.transform = `translate(${dx}px,${dy}px) scale(0.3)`;
+    dot.style.opacity = '0.2';
+  });
+  setTimeout(()=>{
+    dot.remove();
+    cartBtn.animate([{transform:'scale(1)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],{duration:280});
+  }, 650);
+}
 function flyToCart(id, ev){
   const card=document.querySelector(`.p-card[data-id="${id}"] [data-icon]`);
   if(!card) return;
