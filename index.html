@@ -363,6 +363,7 @@ button { font-family: inherit; }
   box-shadow:0 6px 16px rgba(60,87,225,.45);
   transition:transform .6s cubic-bezier(.5,-0.2,.3,1), opacity .6s ease;
 }
+.confetti{ position:fixed; top:-16px; z-index:9999; pointer-events:none; will-change:transform; }
 
 /* footer */
 .foot { background: var(--bey-navy); color: rgba(255,255,255,0.8); padding: 40px; text-align: center; font-size: 13px; }
@@ -971,6 +972,28 @@ function flyToCartFrom(srcEl){
     cartBtn.animate([{transform:'scale(1)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],{duration:280});
   }, 650);
 }
+function confettiBurst(){
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors = ['#3c57e1','#2840c2','#f8ff76','#001a64','#7c8cf0','#ffffff'];
+  for(let i=0;i<90;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti';
+    const size = 6 + Math.random()*7;
+    p.style.width = size + 'px';
+    p.style.height = (size*0.5 + Math.random()*size*0.5) + 'px';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.left = (Math.random()*100) + 'vw';
+    if(Math.random()<0.5) p.style.borderRadius = '50%';
+    document.body.appendChild(p);
+    const dx = (Math.random()*2-1)*140;
+    const rot = (Math.random()*2-1)*720;
+    p.animate([
+      { transform:'translate(0,0) rotate(0deg)', opacity:1 },
+      { transform:`translate(${dx}px, ${window.innerHeight+80}px) rotate(${rot}deg)`, opacity:1, offset:0.9 },
+      { transform:`translate(${dx}px, ${window.innerHeight+100}px) rotate(${rot}deg)`, opacity:0 }
+    ], { duration: 2200 + Math.random()*1800, delay: Math.random()*350, easing:'cubic-bezier(.15,.5,.4,1)' }).onfinish = ()=>p.remove();
+  }
+}
 function flyToCart(id, ev){
   const card=document.querySelector(`.p-card[data-id="${id}"] [data-icon]`);
   if(!card) return;
@@ -1157,6 +1180,7 @@ function checkout(){
     </div>
     <p style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:16px">Hinweis: In dieser Vorschau wird der Versand über Ihr E-Mail-Programm vorbereitet (an Sie & an beyonity).</p>`;
   $('confirmModal').classList.add('open');
+  confettiBurst();
   renderCart();
 }
 
