@@ -199,11 +199,16 @@ button { font-family: inherit; }
 .opt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
 .opt-grid .opt-row { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; align-items: center; }
 .opt-grid .opt-row.on { border-color: var(--bey-blue); background: var(--bey-light-50); }
-.pos-anzahl { font-size:12px; color:var(--text-muted); font-weight:600; margin-bottom:8px; }
-.pos-anzahl strong { color:var(--text); font-weight:800; }
+.pos-anzahl { align-self:flex-start; display:inline-flex; align-items:center; gap:5px; background:var(--bey-blue); color:#fff; font-size:11.5px; font-weight:700; padding:4px 11px; border-radius:999px; margin-bottom:10px; }
+.pos-anzahl strong { font-weight:800; }
 .opt-qty-wrap { display:inline-flex; align-items:center; gap:7px; margin-top:8px; font-size:12px; color:var(--text-muted); font-weight:600; }
 .opt-qty { width:58px; padding:5px 8px; border:1.5px solid var(--line); border-radius:8px; font-size:13px; font-weight:700; color:var(--text); text-align:center; }
 .opt-qty:focus { outline:none; border-color:var(--bey-blue); }
+.lb-iframe { width:min(1100px,92vw); height:80vh; border:0; border-radius:12px; background:#fff; }
+.lb-openext { color:#fff; font-size:13px; font-weight:700; text-decoration:none; opacity:.85; }
+.lb-openext:hover { opacity:1; text-decoration:underline; }
+.pos-thumb.iframe-tile { cursor:pointer; display:flex; align-items:center; justify-content:center; background:var(--bey-light-50); }
+.pos-thumb.iframe-tile:hover { background:#e8ecff; }
 
 /* ===== LIGHTBOX ===== */
 .lightbox { position: fixed; inset: 0; z-index: 300; background: rgba(0,16,52,.92); display: none; align-items: center; justify-content: center; gap: 8px; padding: 20px; }
@@ -589,15 +594,15 @@ function buildOptions(prefix, sunPrice){
 
 /* Gemeinsame Positionen – gleich für alle Tiers; key:'nav' = Navigator-Karte erhält Tier-spezifischen Titel/Text. */
 const POSITIONS = [
-  { key:'nav', qty:"1×", gallery:null },
+  { key:'nav', qty:"1×", gallery:{ type:'iframe', url:'https://sales.showcase.beyonity.com/?id=F5886084&language=de', cap:'Navigator – interaktives Live-Beispiel' } },
   { title:"Exterior Visualization", qty:"6×", desc:"Fotorealistische Außenperspektiven (A3, 300 dpi) inkl. Postproduktion – Perspektive frei wählbar.", gallery:{ type:"image", items:EXT_ITEMS } },
-  { title:"Realtime-Tour S", qty:"5×", icon:ICON_RT, desc:"Begehbarer, möblierter Echtzeit-Rundgang je Wohnung (bis 150 m²) auf Unreal-Basis, als Web-Tour mit Maßangaben.", gallery:null },
+  { title:"Realtime-Tour S", qty:"5×", icon:ICON_RT, desc:"Begehbarer, möblierter Echtzeit-Rundgang je Wohnung (bis 150 m²) auf Unreal-Basis, als Web-Tour mit Maßangaben.", gallery:{ type:'iframe', url:'https://biganto.com/tour/44952/', cap:'Realtime-Tour – Live-Beispiel' } },
   { title:"Render-Paket", qty:"5×", icon:ICON_IMG, desc:"Bis zu 15 hochauflösende Renderings aus jeder Realtime-Tour (je nach Wohnungsgröße).", gallery:null },
   { title:"KI-Bildpaket – neu möbliert", qty:"500", desc:"500 KI-generierte Bilder auf Basis der Realtime-Touren: gleiche Architektur, in verschiedenen Stilen neu möbliert.", gallery:{ type:"image", items:AI_ITEMS } },
   { title:"Social-Media-Videoclip", qty:"1×", desc:"Animiertes Video-Rohmaterial aus den Visualisierungen für Social-Media-Kampagnen (Hochformat).", gallery:{ type:"video", items:VIDEO_ITEMS } },
   { title:"Drohnen-Backplates", qty:"1×", icon:ICON_DRONE, desc:"Drohnenaufnahmen vor Ort als realer Hintergrund für Navigator, Touren und Visualisierungen.", gallery:null },
   { title:"Info-Flags", qty:"10", icon:ICON_FLAG, desc:"Zehn interaktive Highlight-Marker im Navigator mit Verlinkungen zu weiteren Informationen.", gallery:null },
-  { title:"POI-Panorama", qty:"1×", icon:ICON_POI, desc:"360°-Panorama über dem Projekt mit bis zu 15 Points of Interest aus der Umgebung.", gallery:null },
+  { title:"POI-Panorama", qty:"1×", icon:ICON_POI, desc:"360°-Panorama über dem Projekt mit bis zu 15 Points of Interest aus der Umgebung.", gallery:{ type:'iframe', url:'https://sstnavigator.s3.eu-central-1.amazonaws.com/data/FB756001/poi/index.html', cap:'POI-Panorama – Live-Beispiel' } },
   { title:"Data-Dashboard 24/7", qty:"1×", icon:ICON_DASH, desc:"Echtzeit-Auswertung des Nutzerverhaltens im Navigator, rund um die Uhr zugänglich.", gallery:null },
   { title:"Service, Wartung & Updates", qty:"12 Mon.", icon:ICON_SVC, desc:"Technischer Support, Hosting, Schnittstellenpflege und regelmäßige Updates für 12 Monate.", gallery:null }
 ];
@@ -765,14 +770,20 @@ function positionCard(pos, i){
         <span class="pos-playbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
         <span class="pos-cue">${g.items.length} Clips</span>
       </button>`;
+  } else if(g && g.type==='iframe'){
+    media = `<button class="pos-thumb iframe-tile" onclick="openGallery(${i})" aria-label="Live-Beispiel ${title}">
+        <div class="pos-ic">${icon||tier.icon}</div>
+        <span class="pos-cue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Live ansehen</span>
+      </button>`;
   } else {
     media = `<div class="pos-thumb icon"><div class="pos-ic">${icon||tier.icon}</div></div>`;
   }
-  const cta = g ? `<button class="readmore" onclick="openGallery(${i})">${g.type==='video'?'Clips ansehen':'Beispiele ansehen'} →</button>` : '';
+  const ctaLabel = g ? (g.type==='video' ? 'Clips ansehen' : g.type==='iframe' ? 'Live-Beispiel öffnen' : 'Beispiele ansehen') : '';
+  const cta = g ? `<button class="readmore" onclick="openGallery(${i})">${ctaLabel} →</button>` : '';
   return `<div class="pos-card">
       ${media}
       <div class="pos-body">
-        <div class="pos-anzahl">Anzahl <strong>${pos.qty}</strong></div>
+        <span class="pos-anzahl">Anzahl <strong>${pos.qty}</strong></span>
         <h4>${title}</h4><p>${desc}</p>${cta}
       </div>
     </div>`;
@@ -968,12 +979,23 @@ let galleryItems=[], galleryIdx=0, galleryType='image';
 function openGallery(i){
   const g = POSITIONS[i] && POSITIONS[i].gallery;
   if(!g) return;
-  galleryType=g.type; galleryItems=g.items; galleryIdx=0;
+  galleryType = g.type;
+  galleryItems = (g.type==='iframe') ? [{ url:g.url, cap:g.cap||'' }] : g.items;
+  galleryIdx = 0;
   $('lightbox').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
   renderGallery();
 }
 function renderGallery(){
+  const isIframe = galleryType==='iframe';
+  document.querySelectorAll('#lightbox .lb-nav').forEach(b=> b.style.display = (isIframe || galleryItems.length<2) ? 'none' : '');
+  if(isIframe){
+    $('lbStage').innerHTML = `<iframe src="${galleryItems[0].url}" class="lb-iframe" allow="fullscreen; gyroscope; accelerometer; xr-spatial-tracking" allowfullscreen></iframe>`;
+    $('lbCap').textContent = galleryItems[0].cap || '';
+    $('lbCount').textContent = '';
+    $('lbThumbs').innerHTML = `<a class="lb-openext" href="${galleryItems[0].url}" target="_blank" rel="noopener">In neuem Tab öffnen ↗</a>`;
+    return;
+  }
   const it=galleryItems[galleryIdx];
   const stage=$('lbStage');
   if(galleryType==='video'){
