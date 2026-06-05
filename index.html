@@ -142,6 +142,10 @@ button { font-family: inherit; }
 .p-card .includes li::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--ins-green); font-weight: 800; }
 .p-card .opts { margin-top: 18px; border-top: 1px solid var(--line-soft); padding-top: 14px; }
 .opts-h { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.tier-row { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.tier-pill { border: 1.5px solid var(--line); background: #fff; color: var(--text-body); border-radius: 100px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
+.tier-pill:hover { border-color: var(--bey-blue); color: var(--bey-blue); }
+.tier-pill.active { background: var(--bey-blue); border-color: var(--bey-blue); color: #fff; }
 .opt-row { display: flex; align-items: flex-start; gap: 11px; padding: 9px 0; cursor: pointer; border-bottom: 1px solid var(--line-soft); }
 .opt-row:last-child { border-bottom: none; }
 .opt-row input { margin-top: 2px; width: 17px; height: 17px; flex-shrink: 0; accent-color: var(--bey-blue); cursor: pointer; }
@@ -567,44 +571,65 @@ function buildOptions(prefix, sunPrice){
   ];
 }
 
-/* Nur noch EIN Paket: Vermarktungspaket XL, mit visuell erklärten Einzelpositionen. */
-const XL = {
-  id: "paket-xl",
-  title: "Vermarktungspaket XL",
-  quote: "AN-GE-26-0105",
-  range: "81 – 250 Einheiten",
-  color: "#2840c2",
-  icon: ICON_NAV,
-  price: 56425,
-  pitch: "Das Komplettpaket für große Projekte mit 81 bis 250 Einheiten – vom 360°-Navigator über fotorealistische Bildwelten bis zu Service und Wartung. Jede Position unten lässt sich mit echten Beispielen ansehen.",
-  positions: [
-    { title:"Navigator XL", qty:"1×", icon:ICON_NAV, desc:"360° virtuelles, drehbares Gebäudemodell (bis 10 Gebäudekörper) mit interaktiver Objektliste, Filter, Favoriten, Galerie, DMS/CRM-Schnittstelle und URL-Einbindung.", gallery:null },
-    { title:"Exterior Visualization", qty:"6×", desc:"Fotorealistische Außenperspektiven (A3, 300 dpi) inkl. Postproduktion – Perspektive frei wählbar.", gallery:{ type:"image", items:EXT_ITEMS } },
-    { title:"Realtime-Tour S", qty:"5×", icon:ICON_RT, desc:"Begehbarer, möblierter Echtzeit-Rundgang je Wohnung (bis 150 m²) auf Unreal-Basis, als Web-Tour mit Maßangaben.", gallery:null },
-    { title:"KI-Bildpaket – neu möbliert", qty:"500", desc:"500 KI-generierte Bilder auf Basis der Realtime-Touren: gleiche Architektur, in verschiedenen Stilen neu möbliert.", gallery:{ type:"image", items:AI_ITEMS } },
-    { title:"Social-Media-Videoclip", qty:"1×", desc:"Animiertes Video-Rohmaterial aus den Visualisierungen für Social-Media-Kampagnen (Hochformat).", gallery:{ type:"video", items:VIDEO_ITEMS } },
-    { title:"Drohnen-Backplates", qty:"1×", icon:ICON_DRONE, desc:"Drohnenaufnahmen vor Ort als realer Hintergrund für Navigator, Touren und Visualisierungen.", gallery:null },
-    { title:"Info-Flags", qty:"10", icon:ICON_FLAG, desc:"Zehn interaktive Highlight-Marker im Navigator mit Verlinkungen zu weiteren Informationen.", gallery:null },
-    { title:"POI-Panorama", qty:"1×", icon:ICON_POI, desc:"360°-Panorama über dem Projekt mit bis zu 15 Points of Interest aus der Umgebung.", gallery:null },
-    { title:"Data-Dashboard 24/7", qty:"1×", icon:ICON_DASH, desc:"Echtzeit-Auswertung des Nutzerverhaltens im Navigator, rund um die Uhr zugänglich.", gallery:null },
-    { title:"Service, Wartung & Updates", qty:"12 Mon.", icon:ICON_SVC, desc:"Technischer Support, Hosting, Schnittstellenpflege und regelmäßige Updates für 12 Monate.", gallery:null }
-  ],
-  options: buildOptions("xl", 4000)
-};
-const PACKAGES = [XL];
+/* Gemeinsame Positionen – gleich für alle Tiers; key:'nav' = Navigator-Karte erhält Tier-spezifischen Titel/Text. */
+const POSITIONS = [
+  { key:'nav', qty:"1×", gallery:null },
+  { title:"Exterior Visualization", qty:"6×", desc:"Fotorealistische Außenperspektiven (A3, 300 dpi) inkl. Postproduktion – Perspektive frei wählbar.", gallery:{ type:"image", items:EXT_ITEMS } },
+  { title:"Realtime-Tour S", qty:"5×", icon:ICON_RT, desc:"Begehbarer, möblierter Echtzeit-Rundgang je Wohnung (bis 150 m²) auf Unreal-Basis, als Web-Tour mit Maßangaben.", gallery:null },
+  { title:"KI-Bildpaket – neu möbliert", qty:"500", desc:"500 KI-generierte Bilder auf Basis der Realtime-Touren: gleiche Architektur, in verschiedenen Stilen neu möbliert.", gallery:{ type:"image", items:AI_ITEMS } },
+  { title:"Social-Media-Videoclip", qty:"1×", desc:"Animiertes Video-Rohmaterial aus den Visualisierungen für Social-Media-Kampagnen (Hochformat).", gallery:{ type:"video", items:VIDEO_ITEMS } },
+  { title:"Drohnen-Backplates", qty:"1×", icon:ICON_DRONE, desc:"Drohnenaufnahmen vor Ort als realer Hintergrund für Navigator, Touren und Visualisierungen.", gallery:null },
+  { title:"Info-Flags", qty:"10", icon:ICON_FLAG, desc:"Zehn interaktive Highlight-Marker im Navigator mit Verlinkungen zu weiteren Informationen.", gallery:null },
+  { title:"POI-Panorama", qty:"1×", icon:ICON_POI, desc:"360°-Panorama über dem Projekt mit bis zu 15 Points of Interest aus der Umgebung.", gallery:null },
+  { title:"Data-Dashboard 24/7", qty:"1×", icon:ICON_DASH, desc:"Echtzeit-Auswertung des Nutzerverhaltens im Navigator, rund um die Uhr zugänglich.", gallery:null },
+  { title:"Service, Wartung & Updates", qty:"12 Mon.", icon:ICON_SVC, desc:"Technischer Support, Hosting, Schnittstellenpflege und regelmäßige Updates für 12 Monate.", gallery:null }
+];
+
+const TIERS = [
+  {
+    id:"paket-l", key:"l", title:"Vermarktungspaket L", quote:"AN-GE-26-0104",
+    range:"41 – 80 Einheiten", minUnits:41, maxUnits:80, color:"#3c57e1", icon:ICON_NAV,
+    price:53725,
+    navLabel:"Navigator L (bis 5 Gebäudekörper)",
+    navDesc:"360° virtuelles, drehbares Gebäudemodell (bis 5 Gebäudekörper) mit interaktiver Objektliste, Filter, Favoriten, Galerie, DMS/CRM-Schnittstelle und URL-Einbindung.",
+    pitch:"Das Komplettpaket für Projekte mit 41 bis 80 Einheiten – vom 360°-Navigator über fotorealistische Bildwelten bis zu Service und Wartung. Jede Position lässt sich mit echten Beispielen ansehen.",
+    options: buildOptions("l", 2800)
+  },
+  {
+    id:"paket-xl", key:"xl", title:"Vermarktungspaket XL", quote:"AN-GE-26-0105",
+    range:"81 – 250 Einheiten", minUnits:81, maxUnits:250, color:"#2840c2", icon:ICON_NAV,
+    price:56425,
+    navLabel:"Navigator XL (bis 10 Gebäudekörper)",
+    navDesc:"360° virtuelles, drehbares Gebäudemodell (bis 10 Gebäudekörper) mit interaktiver Objektliste, Filter, Favoriten, Galerie, DMS/CRM-Schnittstelle und URL-Einbindung.",
+    pitch:"Das Komplettpaket für große Projekte mit 81 bis 250 Einheiten – vom 360°-Navigator über fotorealistische Bildwelten bis zu Service und Wartung. Jede Position lässt sich mit echten Beispielen ansehen.",
+    options: buildOptions("xl", 4000)
+  },
+  {
+    id:"paket-xxl", key:"xxl", title:"Vermarktungspaket XXL", quote:"AN-GE-26-0106",
+    range:"251 – 500 Einheiten", minUnits:251, maxUnits:500, color:"#001a64", icon:ICON_NAV,
+    price:63275, // TODO: Preis aus Angebot AN-GE-26-0106 bitte prüfen
+    navLabel:"Navigator XXL (251–500 Einheiten)",
+    navDesc:"360° virtuelles, drehbares Gebäudemodell (251–500 Einheiten, unbegrenzte Gebäudekörper) mit interaktiver Objektliste, Filter, Favoriten, Galerie, DMS/CRM-Schnittstelle und URL-Einbindung.",
+    pitch:"Das Komplettpaket für Großprojekte mit 251 bis 500 Einheiten – vom 360°-Navigator XXL über fotorealistische Bildwelten bis zu Service und Wartung. Jede Position lässt sich mit echten Beispielen ansehen.",
+    options: buildOptions("xxl", 4000)
+  }
+];
+const PACKAGES = TIERS;
 
 /* ---- Helper rund um Pakete & Optionen ---- */
 function pkgById(id){ return PACKAGES.find(p=>p.id===id); }
+function activeTier(){ return TIERS.find(t=>t.id===selectedTierId) || TIERS[1]; }
 function optById(pkg, oid){ return (pkg.options||[]).find(o=>o.id===oid); }
 function selectedOptIds(id){ const e=cart[id]; return e ? Object.keys(e.opts).filter(k=>e.opts[k]) : []; }
 function cartItemNet(id){ const p=pkgById(id); if(!p) return 0; let n=p.price; selectedOptIds(id).forEach(oid=>{ const o=optById(p,oid); if(o) n+=o.price; }); return n; }
 function itemNet(it){ const p=pkgById(it.id); if(!p) return 0; let n=p.price; (it.opts||[]).forEach(oid=>{ const o=optById(p,oid); if(o) n+=o.price; }); return n; }
 function orderNet(o){ return (o.items||[]).reduce((s,it)=>s+itemNet(it),0); }
 
-/* Nur ein Paket (XL): nach dem Setup automatisch als Auswahl setzen. */
+/* Passendes Tier nach Einheitenzahl ermitteln und in den Warenkorb legen. */
 function applyRecommendation(){
-  selectOnly("paket-xl");
-  updateCartUI();
+  const units = project ? project.units : 0;
+  const rec = TIERS.find(t => units>=t.minUnits && units<=t.maxUnits) || TIERS[1];
+  setTier(rec.id);
 }
 
 /* ============== STATE ============== */
@@ -612,7 +637,8 @@ let project = null;          // ausgefülltes Setup
 const cart = {};             // id -> { opts: { optId:true } }
 let orders = [];             // Vergangenheit
 let storageOK = false;
-let autoPkgId = null;        // zuletzt automatisch nach Einheitenzahl vorausgewähltes Paket
+let autoPkgId = null;
+let selectedTierId = 'paket-xl'; // aktives Tier (Single-Select)
 
 /* ============== UTIL ============== */
 const fmt = n => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(n);
@@ -665,53 +691,61 @@ function setStep(n){
 function hexA(hex,a){ const h=hex.replace('#',''); const r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16); return `rgba(${r},${g},${b},${a})`; }
 
 function positionCard(pos, i){
+  const tier = activeTier();
+  const title = pos.key==='nav' ? tier.navLabel : pos.title;
+  const desc  = pos.key==='nav' ? tier.navDesc  : pos.desc;
+  const icon  = pos.key==='nav' ? tier.icon      : pos.icon;
   const g=pos.gallery;
   let media;
   if(g && g.type==='image'){
-    media = `<button class="pos-thumb has-gallery" onclick="openGallery(${i})" style="background-image:url('${g.items[0].thumb}')" aria-label="Beispiele zu ${pos.title}">
+    media = `<button class="pos-thumb has-gallery" onclick="openGallery(${i})" style="background-image:url('${g.items[0].thumb}')" aria-label="Beispiele zu ${title}">
         <span class="pos-qty">${pos.qty}</span>
         <span class="pos-cue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>${g.items.length} Beispiele</span>
       </button>`;
   } else if(g && g.type==='video'){
-    media = `<button class="pos-thumb has-gallery video" onclick="openGallery(${i})" style="background-image:url('${g.items[0].poster}')" aria-label="Clips zu ${pos.title}">
+    media = `<button class="pos-thumb has-gallery video" onclick="openGallery(${i})" style="background-image:url('${g.items[0].poster}')" aria-label="Clips zu ${title}">
         <span class="pos-qty">${pos.qty}</span>
         <span class="pos-playbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
         <span class="pos-cue">${g.items.length} Clips</span>
       </button>`;
   } else {
-    media = `<div class="pos-thumb icon"><span class="pos-qty">${pos.qty}</span><div class="pos-ic">${pos.icon||XL.icon}</div></div>`;
+    media = `<div class="pos-thumb icon"><span class="pos-qty">${pos.qty}</span><div class="pos-ic">${icon||tier.icon}</div></div>`;
   }
   const cta = g ? `<button class="readmore" onclick="openGallery(${i})">${g.type==='video'?'Clips ansehen':'Beispiele ansehen'} →</button>` : '';
   return `<div class="pos-card">
       ${media}
-      <div class="pos-body"><h4>${pos.title}</h4><p>${pos.desc}</p>${cta}</div>
+      <div class="pos-body"><h4>${title}</h4><p>${desc}</p>${cta}</div>
     </div>`;
 }
 
 function renderXL(){
-  const p=XL;
+  const p = activeTier();
+  const tierPills = TIERS.map(t=>
+    `<button class="tier-pill${t.id===selectedTierId?' active':''}" onclick="setTier('${t.id}');renderXL();renderCart();">${t.range} · ${t.key.toUpperCase()}</button>`
+  ).join('');
   $('xlView').innerHTML = `
     <div class="xl-head">
       <div class="xl-head-main">
+        <div class="tier-row">${tierPills}</div>
         <span class="range-badge">${p.range}</span>
-        <h3 class="xl-title">Vermarktungspaket <span class="accent">XL</span></h3>
+        <h3 class="xl-title">Vermarktungspaket <span class="accent">${p.key.toUpperCase()}</span></h3>
         <p class="xl-pitch">${p.pitch}</p>
       </div>
       <div class="xl-pricebox">
         <div class="xl-price" id="xlTotal">${fmt(p.price)}</div>
         <div class="xl-price-note" id="xlTotalNote">Paketpreis · netto</div>
-        <button class="checkout-btn" onclick="addToCart('paket-xl', event); openCart();">Zum Warenkorb</button>
+        <button class="checkout-btn" onclick="if(!cart[activeTier().id])selectOnly(activeTier().id);openCart();">Zum Warenkorb</button>
       </div>
     </div>
     <h3 class="xl-sec">Enthaltene Leistungen</h3>
-    <div class="pos-grid">${p.positions.map((pos,i)=>positionCard(pos,i)).join('')}</div>
+    <div class="pos-grid">${POSITIONS.map((pos,i)=>positionCard(pos,i)).join('')}</div>
     <h3 class="xl-sec">Optional zubuchbar</h3>
     <div class="opt-grid" id="xlOpts"></div>`;
   refreshXL();
 }
 
 function renderXLOptions(){
-  const p=XL; const sel=selectedOptIds(p.id);
+  const p=activeTier(); const sel=selectedOptIds(p.id);
   $('xlOpts').innerHTML = p.options.map(o=>{
     const checked=sel.includes(o.id);
     return `<label class="opt-row ${checked?'on':''}">
@@ -726,17 +760,25 @@ function renderXLOptions(){
 function refreshXL(){
   if(!$('xlOpts')) return;
   renderXLOptions();
-  const optNet = selectedOptIds(XL.id).reduce((s,oid)=>{const o=optById(XL,oid);return s+(o?o.price:0);},0);
-  if($('xlTotal')) $('xlTotal').textContent = fmt(XL.price + optNet);
+  const p=activeTier();
+  const optNet = selectedOptIds(p.id).reduce((s,oid)=>{const o=optById(p,oid);return s+(o?o.price:0);},0);
+  if($('xlTotal')) $('xlTotal').textContent = fmt(p.price + optNet);
   if($('xlTotalNote')) $('xlTotalNote').textContent = optNet>0 ? 'netto · inkl. gewählter Optionen' : 'Paketpreis · netto';
 }
 
 /* ============== WARENKORB ============== */
-/* Single-Select: es darf immer nur EIN Paket im Warenkorb liegen.
-   Wählt der Nutzer ein anderes Paket, wird das bisherige (inkl. Optionen) entfernt. */
+/* Single-Select: es darf immer nur EIN Paket im Warenkorb liegen. */
 function selectOnly(id){
   Object.keys(cart).forEach(k=>{ if(k!==id) delete cart[k]; });
   if(!cart[id]) cart[id]={ opts:{} };
+}
+function setTier(id){
+  const prev = selectedTierId;
+  selectedTierId = id;
+  if(prev !== id && cart[prev]) delete cart[prev];
+  if(!cart[id]) cart[id] = { opts:{} };
+  autoPkgId = id;
+  updateCartUI();
 }
 function addToCart(id, ev){
   if(cart[id]) return;            // schon gewählt -> nichts zu tun
@@ -833,7 +875,7 @@ function flyToCart(id, ev){
 /* ============== LIGHTBOX / GALERIE ============== */
 let galleryItems=[], galleryIdx=0, galleryType='image';
 function openGallery(i){
-  const g = XL.positions[i] && XL.positions[i].gallery;
+  const g = POSITIONS[i] && POSITIONS[i].gallery;
   if(!g) return;
   galleryType=g.type; galleryItems=g.items; galleryIdx=0;
   $('lightbox').classList.add('open');
@@ -937,7 +979,7 @@ function checkout(){
     project:`${project.projectName}, ${project.projectLoc}`,
     buildings:project.buildings, units:project.units, usage:project.usage,
     by:project.name, date:new Date().toISOString().slice(0,10),
-    status:'progress', net:net, items:items
+    status:'progress', net:net, items:items, tier:selectedTierId
   };
   orders.unshift(order);
   saveOrders();
