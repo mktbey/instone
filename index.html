@@ -556,15 +556,17 @@ function recommendedPkg(){
   if(!project || !project.units) return null;
   return PACKAGES.find(p => project.units >= p.minUnits && project.units <= p.maxUnits) || null;
 }
-/* Legt das passende Paket automatisch in den Warenkorb; ersetzt eine frühere
-   Auto-Wahl, lässt manuell gewählte Pakete und Optionen unberührt. */
+/* Wählt das passende Paket anhand der Einheitenzahl automatisch aus.
+   Single-Select: die Empfehlung wird zur alleinigen Auswahl; bereits gewählte
+   Optionen desselben Pakets bleiben erhalten. */
 function applyRecommendation(){
   const rec = recommendedPkg();
   const recId = rec ? rec.id : null;
-  // alte Auto-Wahl entfernen, falls sie sich geändert hat und noch im Warenkorb liegt
-  if(autoPkgId && autoPkgId !== recId && cart[autoPkgId]) delete cart[autoPkgId];
-  // neue Empfehlung hinzufügen (ohne bestehende Auswahl/Optionen zu überschreiben)
-  if(recId && !cart[recId]) cart[recId] = { opts:{} };
+  if(recId){
+    const keepOpts = cart[recId] ? cart[recId].opts : {};
+    Object.keys(cart).forEach(k=>delete cart[k]);   // Single-Select: alles andere weg
+    cart[recId] = { opts: keepOpts };
+  }
   autoPkgId = recId;
   updateCartUI();
 }
@@ -696,24 +698,32 @@ function renderCardState(p){
 }
 
 /* ============== WARENKORB ============== */
-function addToCart(id, ev){
+/* Single-Select: es darf immer nur EIN Paket im Warenkorb liegen.
+   Wählt der Nutzer ein anderes Paket, wird das bisherige (inkl. Optionen) entfernt. */
+function selectOnly(id){
+  Object.keys(cart).forEach(k=>{ if(k!==id) delete cart[k]; });
   if(!cart[id]) cart[id]={ opts:{} };
+}
+function addToCart(id, ev){
+  if(cart[id]) return;            // schon gewählt -> nichts zu tun
+  selectOnly(id);
   flyToCart(id, ev);
-  renderCardState(pkgById(id));
+  PACKAGES.forEach(renderCardState);   // alle Karten aktualisieren (anderes Paket wird abgewählt)
+  renderCart();
   updateCartUI();
   setStep(2);
 }
 function toggleOption(pkgId, optId){
-  if(!cart[pkgId]) cart[pkgId]={ opts:{} };   // Option wählen fügt das Paket hinzu
+  if(!cart[pkgId]) selectOnly(pkgId);   // Option wählen wählt dieses Paket exklusiv aus
   cart[pkgId].opts[optId] = !cart[pkgId].opts[optId];
   if(!cart[pkgId].opts[optId]) delete cart[pkgId].opts[optId];
-  renderCardState(pkgById(pkgId));
+  PACKAGES.forEach(renderCardState);
   renderCart();
   updateCartUI();
 }
 function removeFromCart(id){
   delete cart[id];
-  renderCardState(pkgById(id));
+  PACKAGES.forEach(renderCardState);
   renderCart();
   updateCartUI();
 }
