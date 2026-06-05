@@ -626,14 +626,14 @@ function buildOptions(prefix, sunPrice){
 /* Gemeinsame Positionen – gleich für alle Tiers; key:'nav' = Navigator-Karte erhält Tier-spezifischen Titel/Text. */
 const POSITIONS = [
   { key:'nav', qty:"1×", gallery:{ type:'iframe', url:'https://sales.showcase.beyonity.com/?id=F5886084&language=de', thumb:'https://sstnavigator.s3.eu-central-1.amazonaws.com/data/F5886084/f1012/comp_page1.jpg', cap:'Navigator – interaktives Live-Beispiel' } },
+  { title:"Info-Flags", qty:"10", icon:ICON_FLAG, desc:"Zehn interaktive Highlight-Marker im Navigator mit Verlinkungen zu weiteren Informationen.", gallery:{ type:"image", items:[{ full:'assets/live/infoflags.webp', thumb:'assets/live/infoflags-thumb.webp', cap:'Info-Flags im Showcase – Beispiel „Grosser Spielplatz"' }] } },
+  { title:"POI-Panorama", qty:"1×", icon:ICON_POI, desc:"360°-Panorama über dem Projekt mit bis zu 15 Points of Interest aus der Umgebung.", gallery:{ type:'iframe', url:'https://sstnavigator.s3.eu-central-1.amazonaws.com/data/FB756001/poi/index.html', thumb:'assets/live/poi.webp', cap:'POI-Panorama – Live-Beispiel' } },
   { title:"Exterior Visualization", qty:"6×", desc:"Fotorealistische Außenperspektiven (A3, 300 dpi) inkl. Postproduktion – Perspektive frei wählbar.", gallery:{ type:"image", items:EXT_ITEMS } },
   { title:"Realtime-Tour S", qty:"5×", icon:ICON_RT, desc:"Begehbarer, möblierter Echtzeit-Rundgang je Wohnung (bis 150 m²) auf Unreal-Basis, als Web-Tour mit Maßangaben.", gallery:{ type:'iframe', url:'https://biganto.com/tour/44952/', thumb:'https://biganto.com/assets/tours/screen/00/00/af/44952-e2a1f5.png', cap:'Realtime-Tour – Live-Beispiel' } },
   { title:"Render-Paket", qty:"5×", icon:ICON_IMG, desc:"Bis zu 15 hochauflösende Renderings aus jeder Realtime-Tour (je nach Wohnungsgröße).", gallery:{ type:"image", items:RENDER_ITEMS } },
   { title:"KI-Bildpaket – neu möbliert", qty:"500", desc:"500 KI-generierte Bilder auf Basis der Realtime-Touren: gleiche Architektur, in verschiedenen Stilen neu möbliert.", gallery:{ type:"image", items:AI_ITEMS } },
   { title:"Social-Media-Videoclip", qty:"1×", desc:"Animiertes Video-Rohmaterial aus den Visualisierungen für Social-Media-Kampagnen (Hochformat).", gallery:{ type:"video", items:VIDEO_ITEMS } },
   { title:"Drohnen-Backplates", qty:"1×", icon:ICON_DRONE, desc:"Drohnenaufnahmen vor Ort als realer Hintergrund für Navigator, Touren und Visualisierungen.", gallery:{ type:"image", items:[{ full:'assets/live/drone-backplates.webp', thumb:'assets/live/drone-backplates-thumb.webp', cap:'Drohnen-Backplate als realer Hintergrund im Showcase' }] } },
-  { title:"Info-Flags", qty:"10", icon:ICON_FLAG, desc:"Zehn interaktive Highlight-Marker im Navigator mit Verlinkungen zu weiteren Informationen.", gallery:{ type:"image", items:[{ full:'assets/live/infoflags.webp', thumb:'assets/live/infoflags-thumb.webp', cap:'Info-Flags im Showcase – Beispiel „Grosser Spielplatz"' }] } },
-  { title:"POI-Panorama", qty:"1×", icon:ICON_POI, desc:"360°-Panorama über dem Projekt mit bis zu 15 Points of Interest aus der Umgebung.", gallery:{ type:'iframe', url:'https://sstnavigator.s3.eu-central-1.amazonaws.com/data/FB756001/poi/index.html', thumb:'assets/live/poi.webp', cap:'POI-Panorama – Live-Beispiel' } },
   { title:"Data-Dashboard 24/7", qty:"1×", icon:ICON_DASH, desc:"Echtzeit-Auswertung des Nutzerverhaltens im Navigator, rund um die Uhr zugänglich.", gallery:{ type:"image", items:[{ full:'assets/live/data-dashboard.webp', thumb:'assets/live/data-dashboard-thumb.webp', cap:'Data-Dashboard – Echtzeit-Auswertung des Navigators' }] } },
   { title:"Service, Wartung & Updates", qty:"12 Mon.", icon:ICON_SVC, desc:"Technischer Support, Hosting, Schnittstellenpflege und regelmäßige Updates für 12 Monate.", gallery:null }
 ];
@@ -1106,8 +1106,6 @@ const wizSteps=[
     fields:[{k:'buildings',l:'Anzahl Gebäude',t:'number',ph:'z. B. 3'}] },
   { key:'units', label:'Anzahl Einheiten', title:'Anzahl der Einheiten', sub:'Wie viele Wohn- oder Gewerbeeinheiten insgesamt?',
     fields:[{k:'units',l:'Anzahl Einheiten',t:'number',ph:'z. B. 48'}] },
-  { key:'usage', label:'Nutzungsart', title:'Nutzungsart', sub:'Wie wird das Projekt vermarktet?',
-    fields:[{k:'usage',l:'Nutzungsart',t:'select',options:['Zur Miete','Zum Verkauf','Miete und Verkauf','Gewerblich','Mixed Use']}] }
 ];
 let wizIdx=0; const wizData={};
 
@@ -1141,7 +1139,7 @@ function wizNext(){
   project={
     name:wizData.name, email:wizData.email,
     projectName:wizData.projectName, projectLoc:wizData.projectLoc,
-    buildings:+wizData.buildings, units:+wizData.units, usage:wizData.usage
+    buildings:+wizData.buildings, units:+wizData.units
   };
   $('userName').textContent=project.name;
   saveProject();
@@ -1162,7 +1160,7 @@ function checkout(){
   const order={
     id:'BE-'+new Date().getFullYear()+'-'+String(Math.floor(1000+Math.random()*8999)),
     project:`${project.projectName}, ${project.projectLoc}`,
-    buildings:project.buildings, units:project.units, usage:project.usage,
+    buildings:project.buildings, units:project.units,
     by:project.name, date:new Date().toISOString().slice(0,10),
     status:'progress', net:net, items:items, tier:selectedTierId
   };
@@ -1182,7 +1180,7 @@ function checkout(){
 `Projekt: ${project.projectName}%0D%0A`+
 `Standort: ${project.projectLoc}%0D%0A`+
 `Gebäude: ${project.buildings} · Einheiten: ${project.units}%0D%0A`+
-`Nutzungsart: ${project.usage}%0D%0A%0D%0A`+
+`%0D%0A`+
 `Pakete & Optionen:%0D%0A${lines}%0D%0A%0D%0A`+
 `Netto: ${fmt(net)}%0D%0A`+
 `MwSt (${(CONFIG.vatRate*100).toFixed(0)}%): ${fmt(vat)}%0D%0A`+
@@ -1225,7 +1223,7 @@ function renderOrders(){
       : '<span class="ostatus progress">In Bearbeitung</span>';
     return `<div class="order-row" onclick="openOrder(${i})">
       <span class="oid">${o.id}</span>
-      <div class="oproj"><div class="pname">${o.project}</div><div class="pmeta">${o.buildings} Gebäude · ${o.units} Einheiten · ${o.usage}</div></div>
+      <div class="oproj"><div class="pname">${o.project}</div><div class="pmeta">${o.buildings} Gebäude · ${o.units} Einheiten</div></div>
       <span class="odate">${o.date}</span>
       ${st}
       <span class="ototal">${fmt(gross)}</span>
@@ -1245,7 +1243,6 @@ function openOrder(i){
     <div style="font-size:14px;color:var(--text-body);line-height:1.9;margin-bottom:18px">
       <div><strong style="color:var(--text)">Projekt:</strong> ${o.project}</div>
       <div><strong style="color:var(--text)">Gebäude / Einheiten:</strong> ${o.buildings} / ${o.units}</div>
-      <div><strong style="color:var(--text)">Nutzungsart:</strong> ${o.usage}</div>
       <div><strong style="color:var(--text)">Besteller:</strong> ${o.by}</div>
       <div><strong style="color:var(--text)">Datum:</strong> ${o.date}</div>
     </div>
