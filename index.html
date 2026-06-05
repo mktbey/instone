@@ -603,9 +603,9 @@ function buildOptions(prefix, sunPrice){
 
 /* Gemeinsame Positionen – gleich für alle Tiers; key:'nav' = Navigator-Karte erhält Tier-spezifischen Titel/Text. */
 const POSITIONS = [
-  { key:'nav', qty:"1×", gallery:{ type:'iframe', url:'https://sales.showcase.beyonity.com/?id=F5886084&language=de', cap:'Navigator – interaktives Live-Beispiel' } },
+  { key:'nav', qty:"1×", gallery:{ type:'iframe', url:'https://sales.showcase.beyonity.com/?id=F5886084&language=de', thumb:'https://sstnavigator.s3.eu-central-1.amazonaws.com/data/F5886084/f1012/comp_page1.jpg', cap:'Navigator – interaktives Live-Beispiel' } },
   { title:"Exterior Visualization", qty:"6×", desc:"Fotorealistische Außenperspektiven (A3, 300 dpi) inkl. Postproduktion – Perspektive frei wählbar.", gallery:{ type:"image", items:EXT_ITEMS } },
-  { title:"Realtime-Tour S", qty:"5×", icon:ICON_RT, desc:"Begehbarer, möblierter Echtzeit-Rundgang je Wohnung (bis 150 m²) auf Unreal-Basis, als Web-Tour mit Maßangaben.", gallery:{ type:'iframe', url:'https://biganto.com/tour/44952/', cap:'Realtime-Tour – Live-Beispiel' } },
+  { title:"Realtime-Tour S", qty:"5×", icon:ICON_RT, desc:"Begehbarer, möblierter Echtzeit-Rundgang je Wohnung (bis 150 m²) auf Unreal-Basis, als Web-Tour mit Maßangaben.", gallery:{ type:'iframe', url:'https://biganto.com/tour/44952/', thumb:'https://biganto.com/assets/tours/screen/00/00/af/44952-e2a1f5.png', cap:'Realtime-Tour – Live-Beispiel' } },
   { title:"Render-Paket", qty:"5×", icon:ICON_IMG, desc:"Bis zu 15 hochauflösende Renderings aus jeder Realtime-Tour (je nach Wohnungsgröße).", gallery:null },
   { title:"KI-Bildpaket – neu möbliert", qty:"500", desc:"500 KI-generierte Bilder auf Basis der Realtime-Touren: gleiche Architektur, in verschiedenen Stilen neu möbliert.", gallery:{ type:"image", items:AI_ITEMS } },
   { title:"Social-Media-Videoclip", qty:"1×", desc:"Animiertes Video-Rohmaterial aus den Visualisierungen für Social-Media-Kampagnen (Hochformat).", gallery:{ type:"video", items:VIDEO_ITEMS } },
@@ -785,10 +785,14 @@ function positionCard(pos, i){
         <span class="pos-cue">${g.items.length} Clips</span>
       </button>`;
   } else if(g && g.type==='iframe'){
-    media = `<button class="pos-thumb iframe-tile" onclick="openGallery(${i})" aria-label="Live-Beispiel ${title}">
-        <div class="pos-ic">${icon||tier.icon}</div>
-        <span class="pos-cue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Live ansehen</span>
-      </button>`;
+    media = g.thumb
+      ? `<button class="pos-thumb has-gallery" onclick="openGallery(${i})" style="background-image:url('${g.thumb}')" aria-label="Live-Beispiel ${title}">
+           <span class="pos-cue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Live ansehen</span>
+         </button>`
+      : `<button class="pos-thumb iframe-tile" onclick="openGallery(${i})" aria-label="Live-Beispiel ${title}">
+           <div class="pos-ic">${icon||tier.icon}</div>
+           <span class="pos-cue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Live ansehen</span>
+         </button>`;
   } else {
     media = `<div class="pos-thumb icon"><div class="pos-ic">${icon||tier.icon}</div></div>`;
   }
