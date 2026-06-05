@@ -209,6 +209,8 @@ button { font-family: inherit; }
 .opt-qty::-webkit-outer-spin-button, .opt-qty::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
 .opt-qty:focus { outline:none; background:var(--bey-light-50); }
 .lb-iframe { width:min(1100px,92vw); height:80vh; border:0; border-radius:12px; background:#fff; }
+.lightbox.embed .lb-center { max-width: 96vw; width: 96vw; }
+.lightbox.embed .lb-iframe { width: 96vw; height: calc(100vh - 120px); }
 .lb-openext { color:#fff; font-size:13px; font-weight:700; text-decoration:none; opacity:.85; }
 .lb-openext:hover { opacity:1; text-decoration:underline; }
 .pos-thumb.iframe-tile { cursor:pointer; display:flex; align-items:center; justify-content:center; background:var(--bey-light-50); }
@@ -1002,6 +1004,7 @@ function openGallery(i){
 }
 function renderGallery(){
   const isIframe = galleryType==='iframe';
+  $('lightbox').classList.toggle('embed', isIframe);
   document.querySelectorAll('#lightbox .lb-nav').forEach(b=> b.style.display = (isIframe || galleryItems.length<2) ? 'none' : '');
   if(isIframe){
     $('lbStage').innerHTML = `<iframe src="${galleryItems[0].url}" class="lb-iframe" allow="fullscreen; gyroscope; accelerometer; xr-spatial-tracking" allowfullscreen></iframe>`;
