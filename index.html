@@ -201,9 +201,13 @@ button { font-family: inherit; }
 .opt-grid .opt-row.on { border-color: var(--bey-blue); background: var(--bey-light-50); }
 .pos-anzahl { align-self:flex-start; display:inline-flex; align-items:center; gap:5px; background:var(--bey-blue); color:#fff; font-size:11.5px; font-weight:700; padding:4px 11px; border-radius:999px; margin-bottom:10px; }
 .pos-anzahl strong { font-weight:800; }
-.opt-qty-wrap { display:inline-flex; align-items:center; gap:7px; margin-top:8px; font-size:12px; color:var(--text-muted); font-weight:600; }
-.opt-qty { width:58px; padding:5px 8px; border:1.5px solid var(--line); border-radius:8px; font-size:13px; font-weight:700; color:var(--text); text-align:center; }
-.opt-qty:focus { outline:none; border-color:var(--bey-blue); }
+.opt-qty-wrap { display:inline-flex; align-items:center; gap:9px; margin-top:10px; font-size:12.5px; color:var(--text); font-weight:700; }
+.opt-stepper { display:inline-flex; align-items:center; border:1.5px solid var(--bey-blue); border-radius:9px; overflow:hidden; background:#fff; }
+.opt-stepper .qstep { width:30px; height:32px; border:0; background:#fff; color:var(--bey-blue); font-size:19px; font-weight:800; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.opt-stepper .qstep:hover { background:var(--bey-light-50); }
+.opt-qty { width:44px; height:32px; border:0; border-left:1.5px solid var(--line); border-right:1.5px solid var(--line); font-size:15px; font-weight:800; color:var(--text); text-align:center; background:#fff; -moz-appearance:textfield; }
+.opt-qty::-webkit-outer-spin-button, .opt-qty::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+.opt-qty:focus { outline:none; background:var(--bey-light-50); }
 .lb-iframe { width:min(1100px,92vw); height:80vh; border:0; border-radius:12px; background:#fff; }
 .lb-openext { color:#fff; font-size:13px; font-weight:700; text-decoration:none; opacity:.85; }
 .lb-openext:hover { opacity:1; text-decoration:underline; }
@@ -650,6 +654,11 @@ function setOptQty(pkgId, optId, val){
   cart[pkgId].opts[optId] = n;
   refreshXL(); renderCart(); updateCartUI();
 }
+function stepOptQty(pkgId, optId, delta){
+  if(!cart[pkgId]) selectOnly(pkgId);
+  const cur = optCount(cart[pkgId], optId) || 1;
+  setOptQty(pkgId, optId, cur + delta);
+}
 function cartItemNet(id){ const p=pkgById(id); if(!p) return 0; let n=p.price; const e=cart[id]; if(e) selectedOptIds(id).forEach(oid=>{ const o=optById(p,oid); if(o) n+=o.price*optCount(e,oid); }); return n; }
 function itemNet(it){ const p=pkgById(it.id); if(!p) return 0; let n=p.price; (it.opts||[]).forEach(o=>{ const oid=o.id||o; const q=o.qty||1; const od=optById(p,oid); if(od) n+=od.price*q; }); return n; }
 function orderNet(o){ return (o.items||[]).reduce((s,it)=>s+itemNet(it),0); }
@@ -821,7 +830,12 @@ function renderXLOptions(){
     const count = optCount(e, o.id);
     const checked = count>0;
     const qtyField = (o.qty && checked)
-      ? `<span class="opt-qty-wrap">Anzahl <input type="number" min="1" class="opt-qty" value="${count}" onclick="event.stopPropagation();" onkeydown="event.stopPropagation();" onchange="setOptQty('${p.id}','${o.id}', this.value)"></span>`
+      ? `<span class="opt-qty-wrap">Anzahl
+           <span class="opt-stepper">
+             <button type="button" class="qstep" onclick="event.preventDefault();event.stopPropagation();stepOptQty('${p.id}','${o.id}',-1)" aria-label="weniger">−</button>
+             <input type="number" min="1" class="opt-qty" value="${count}" onclick="event.stopPropagation();" onkeydown="event.stopPropagation();" onchange="setOptQty('${p.id}','${o.id}', this.value)">
+             <button type="button" class="qstep" onclick="event.preventDefault();event.stopPropagation();stepOptQty('${p.id}','${o.id}',1)" aria-label="mehr">+</button>
+           </span></span>`
       : '';
     const priceLabel = (o.qty && count>1) ? `+ ${fmt(o.price)} × ${count} = ${fmt(o.price*count)}` : `+ ${fmt(o.price)}`;
     return `<label class="opt-row ${checked?'on':''}">
