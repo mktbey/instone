@@ -199,6 +199,11 @@ button { font-family: inherit; }
 .opt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
 .opt-grid .opt-row { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; align-items: center; }
 .opt-grid .opt-row.on { border-color: var(--bey-blue); background: var(--bey-light-50); }
+.pos-anzahl { font-size:12px; color:var(--text-muted); font-weight:600; margin-bottom:8px; }
+.pos-anzahl strong { color:var(--text); font-weight:800; }
+.opt-qty-wrap { display:inline-flex; align-items:center; gap:7px; margin-top:8px; font-size:12px; color:var(--text-muted); font-weight:600; }
+.opt-qty { width:58px; padding:5px 8px; border:1.5px solid var(--line); border-radius:8px; font-size:13px; font-weight:700; color:var(--text); text-align:center; }
+.opt-qty:focus { outline:none; border-color:var(--bey-blue); }
 
 /* ===== LIGHTBOX ===== */
 .lightbox { position: fixed; inset: 0; z-index: 300; background: rgba(0,16,52,.92); display: none; align-items: center; justify-content: center; gap: 8px; padding: 20px; }
@@ -557,6 +562,7 @@ const ICON_FLAG  = '<svg viewBox="0 0 24 24" fill="none" stroke="#2840c2" stroke
 const ICON_POI   = '<svg viewBox="0 0 24 24" fill="none" stroke="#2840c2" stroke-width="1.7"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>';
 const ICON_DASH  = '<svg viewBox="0 0 24 24" fill="none" stroke="#2840c2" stroke-width="1.7"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="5"/><line x1="18" y1="20" x2="18" y2="14"/></svg>';
 const ICON_SVC   = '<svg viewBox="0 0 24 24" fill="none" stroke="#2840c2" stroke-width="1.7"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>';
+const ICON_IMG   = '<svg viewBox="0 0 24 24" fill="none" stroke="#2840c2" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5L5 19"/></svg>';
 
 /* Galerie-Daten – optimierte WebP/MP4 im Ordner assets/ */
 const EXT_ITEMS = Array.from({length:10},(_,i)=>{const n=String(i+1).padStart(2,'0');return {full:`assets/exterior/ext-${n}.webp`, thumb:`assets/exterior/ext-${n}-thumb.webp`, cap:`Außenvisualisierung ${i+1}`};});
@@ -574,9 +580,9 @@ function buildOptions(prefix, sunPrice){
   return [
     { id: prefix+"-sun",      title: "Sonnensimulation",                 desc: "Darstellung des Sonnenverlaufs an einem Stichtag, integriert in den Navigator.", price: sunPrice },
     { id: prefix+"-lang",     title: "Mehrsprachigkeit",                 desc: "Navigator um eine weitere Sprache erweitern.",                                   price: 450 },
-    { id: prefix+"-rts",      title: "Realtime-Tour S · Villa / Duplex", desc: "Virtueller Rundgang einer Villa oder Duplex-Wohnung bis 150 m².",                price: 5800 },
-    { id: prefix+"-rtm",      title: "Realtime-Tour M · Villa / Duplex", desc: "Virtueller Rundgang einer Villa oder Duplex-Wohnung von 150 bis 300 m².",        price: 7800 },
-    { id: prefix+"-intvis",   title: "Interior Visualization Living",    desc: "Virtuelle Innenperspektive im Bildformat (Innenvisualisierung).",                price: 1700 },
+    { id: prefix+"-rts",      title: "Realtime-Tour S · Villa / Duplex", desc: "Virtueller Rundgang einer Villa oder Duplex-Wohnung bis 150 m².",                price: 5800, qty:true },
+    { id: prefix+"-rtm",      title: "Realtime-Tour M · Villa / Duplex", desc: "Virtueller Rundgang einer Villa oder Duplex-Wohnung von 150 bis 300 m².",        price: 7800, qty:true },
+    { id: prefix+"-intvis",   title: "Interior Visualization Living",    desc: "Virtuelle Innenperspektive im Bildformat (Innenvisualisierung).",                price: 1700, qty:true },
     { id: prefix+"-videocgi", title: "Videoclip-Project",                desc: "CGI-Video-Durchflug durch das Projekt, 60–90 Sekunden, Full HD / 1:1.",          price: 9400 }
   ];
 }
@@ -586,6 +592,7 @@ const POSITIONS = [
   { key:'nav', qty:"1×", gallery:null },
   { title:"Exterior Visualization", qty:"6×", desc:"Fotorealistische Außenperspektiven (A3, 300 dpi) inkl. Postproduktion – Perspektive frei wählbar.", gallery:{ type:"image", items:EXT_ITEMS } },
   { title:"Realtime-Tour S", qty:"5×", icon:ICON_RT, desc:"Begehbarer, möblierter Echtzeit-Rundgang je Wohnung (bis 150 m²) auf Unreal-Basis, als Web-Tour mit Maßangaben.", gallery:null },
+  { title:"Render-Paket", qty:"5×", icon:ICON_IMG, desc:"Bis zu 15 hochauflösende Renderings aus jeder Realtime-Tour (je nach Wohnungsgröße).", gallery:null },
   { title:"KI-Bildpaket – neu möbliert", qty:"500", desc:"500 KI-generierte Bilder auf Basis der Realtime-Touren: gleiche Architektur, in verschiedenen Stilen neu möbliert.", gallery:{ type:"image", items:AI_ITEMS } },
   { title:"Social-Media-Videoclip", qty:"1×", desc:"Animiertes Video-Rohmaterial aus den Visualisierungen für Social-Media-Kampagnen (Hochformat).", gallery:{ type:"video", items:VIDEO_ITEMS } },
   { title:"Drohnen-Backplates", qty:"1×", icon:ICON_DRONE, desc:"Drohnenaufnahmen vor Ort als realer Hintergrund für Navigator, Touren und Visualisierungen.", gallery:null },
@@ -631,8 +638,15 @@ function pkgById(id){ return PACKAGES.find(p=>p.id===id); }
 function activeTier(){ return TIERS.find(t=>t.id===selectedTierId) || TIERS[1]; }
 function optById(pkg, oid){ return (pkg.options||[]).find(o=>o.id===oid); }
 function selectedOptIds(id){ const e=cart[id]; return e ? Object.keys(e.opts).filter(k=>e.opts[k]) : []; }
-function cartItemNet(id){ const p=pkgById(id); if(!p) return 0; let n=p.price; selectedOptIds(id).forEach(oid=>{ const o=optById(p,oid); if(o) n+=o.price; }); return n; }
-function itemNet(it){ const p=pkgById(it.id); if(!p) return 0; let n=p.price; (it.opts||[]).forEach(oid=>{ const o=optById(p,oid); if(o) n+=o.price; }); return n; }
+function optCount(entry, oid){ const v = entry && entry.opts ? entry.opts[oid] : 0; if(!v) return 0; return typeof v === 'number' ? v : 1; }
+function setOptQty(pkgId, optId, val){
+  const n = Math.max(1, parseInt(val,10) || 1);
+  if(!cart[pkgId]) selectOnly(pkgId);
+  cart[pkgId].opts[optId] = n;
+  refreshXL(); renderCart(); updateCartUI();
+}
+function cartItemNet(id){ const p=pkgById(id); if(!p) return 0; let n=p.price; const e=cart[id]; if(e) selectedOptIds(id).forEach(oid=>{ const o=optById(p,oid); if(o) n+=o.price*optCount(e,oid); }); return n; }
+function itemNet(it){ const p=pkgById(it.id); if(!p) return 0; let n=p.price; (it.opts||[]).forEach(o=>{ const oid=o.id||o; const q=o.qty||1; const od=optById(p,oid); if(od) n+=od.price*q; }); return n; }
 function orderNet(o){ return (o.items||[]).reduce((s,it)=>s+itemNet(it),0); }
 
 /* Passendes Tier nach Einheitenzahl ermitteln und in den Warenkorb legen. */
@@ -744,22 +758,23 @@ function positionCard(pos, i){
   let media;
   if(g && g.type==='image'){
     media = `<button class="pos-thumb has-gallery" onclick="openGallery(${i})" style="background-image:url('${g.items[0].thumb}')" aria-label="Beispiele zu ${title}">
-        <span class="pos-qty">${pos.qty}</span>
         <span class="pos-cue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>${g.items.length} Beispiele</span>
       </button>`;
   } else if(g && g.type==='video'){
     media = `<button class="pos-thumb has-gallery video" onclick="openGallery(${i})" style="background-image:url('${g.items[0].poster}')" aria-label="Clips zu ${title}">
-        <span class="pos-qty">${pos.qty}</span>
         <span class="pos-playbtn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="8 5 19 12 8 19 8 5"/></svg></span>
         <span class="pos-cue">${g.items.length} Clips</span>
       </button>`;
   } else {
-    media = `<div class="pos-thumb icon"><span class="pos-qty">${pos.qty}</span><div class="pos-ic">${icon||tier.icon}</div></div>`;
+    media = `<div class="pos-thumb icon"><div class="pos-ic">${icon||tier.icon}</div></div>`;
   }
   const cta = g ? `<button class="readmore" onclick="openGallery(${i})">${g.type==='video'?'Clips ansehen':'Beispiele ansehen'} →</button>` : '';
   return `<div class="pos-card">
       ${media}
-      <div class="pos-body"><h4>${title}</h4><p>${desc}</p>${cta}</div>
+      <div class="pos-body">
+        <div class="pos-anzahl">Anzahl <strong>${pos.qty}</strong></div>
+        <h4>${title}</h4><p>${desc}</p>${cta}
+      </div>
     </div>`;
 }
 
@@ -790,13 +805,18 @@ function renderXL(){
 }
 
 function renderXLOptions(){
-  const p=activeTier(); const sel=selectedOptIds(p.id);
+  const p=activeTier(); const e=cart[p.id]||{opts:{}};
   $('xlOpts').innerHTML = p.options.map(o=>{
-    const checked=sel.includes(o.id);
+    const count = optCount(e, o.id);
+    const checked = count>0;
+    const qtyField = (o.qty && checked)
+      ? `<span class="opt-qty-wrap">Anzahl <input type="number" min="1" class="opt-qty" value="${count}" onclick="event.stopPropagation();" onkeydown="event.stopPropagation();" onchange="setOptQty('${p.id}','${o.id}', this.value)"></span>`
+      : '';
+    const priceLabel = (o.qty && count>1) ? `+ ${fmt(o.price)} × ${count} = ${fmt(o.price*count)}` : `+ ${fmt(o.price)}`;
     return `<label class="opt-row ${checked?'on':''}">
       <input type="checkbox" ${checked?'checked':''} onchange="toggleOption('${p.id}','${o.id}', event)">
-      <span class="opt-main"><span class="opt-title">${o.title}</span><span class="opt-desc">${o.desc}</span></span>
-      <span class="opt-price">+ ${fmt(o.price)}</span>
+      <span class="opt-main"><span class="opt-title">${o.title}</span><span class="opt-desc">${o.desc}</span>${qtyField}</span>
+      <span class="opt-price">${priceLabel}</span>
     </label>`;
   }).join('');
 }
@@ -806,7 +826,8 @@ function refreshXL(){
   if(!$('xlOpts')) return;
   renderXLOptions();
   const p=activeTier();
-  const optNet = selectedOptIds(p.id).reduce((s,oid)=>{const o=optById(p,oid);return s+(o?o.price:0);},0);
+  const e = cart[p.id];
+  const optNet = e ? selectedOptIds(p.id).reduce((s,oid)=>{const o=optById(p,oid);return s+(o?o.price*optCount(e,oid):0);},0) : 0;
   if($('xlTotal')) $('xlTotal').textContent = fmt(p.price + optNet);
   if($('xlTotalNote')) $('xlTotalNote').textContent = optNet>0 ? 'netto · inkl. gewählter Optionen' : 'Paketpreis · netto';
 }
@@ -836,9 +857,10 @@ function addToCart(id, ev){
 }
 function toggleOption(pkgId, optId, ev){
   if(!cart[pkgId]) selectOnly(pkgId);
+  const opt = optById(pkgById(pkgId), optId);
   const willAdd = !cart[pkgId].opts[optId];
-  cart[pkgId].opts[optId] = !cart[pkgId].opts[optId];
-  if(!cart[pkgId].opts[optId]) delete cart[pkgId].opts[optId];
+  if(willAdd){ cart[pkgId].opts[optId] = (opt && opt.qty) ? 1 : true; }
+  else { delete cart[pkgId].opts[optId]; }
   if(willAdd && ev && ev.target){ flyToCartFrom(ev.target.closest('.opt-row')); }
   refreshXL();
   renderCart();
@@ -866,13 +888,13 @@ function renderCart(){
   $('cartItems').innerHTML = ids.map(id=>{
     const p=pkgById(id);
     const optRows = selectedOptIds(id).map(oid=>{
-      const o=optById(p,oid);
+      const o=optById(p,oid); const q=optCount(cart[id],oid);
       return `<div class="cart-item opt">
         <div class="ci-info">
-          <div class="ci-name">+ ${o.title}</div>
+          <div class="ci-name">+ ${o.title}${q>1?' × '+q:''}</div>
           <button class="ci-remove" onclick="toggleOption('${id}','${oid}')">Option entfernen</button>
         </div>
-        <div class="ci-price">${fmt(o.price)}</div>
+        <div class="ci-price">${fmt(o.price*q)}</div>
       </div>`;
     }).join('');
     return `<div class="cart-item">
@@ -1044,7 +1066,7 @@ function wizNext(){
 function checkout(){
   if(!project || cartCount()===0) return;
   const net=cartNet(), vat=net*CONFIG.vatRate, gross=net+vat;
-  const items=Object.keys(cart).map(id=>({ id, opts: selectedOptIds(id) }));
+  const items=Object.keys(cart).map(id=>({ id, opts: selectedOptIds(id).map(oid=>({ id:oid, qty: optCount(cart[id], oid) })) }));
   const order={
     id:'BE-'+new Date().getFullYear()+'-'+String(Math.floor(1000+Math.random()*8999)),
     project:`${project.projectName}, ${project.projectLoc}`,
@@ -1059,7 +1081,7 @@ function checkout(){
   const lines=items.map(it=>{
     const p=pkgById(it.id);
     let block=`- ${p.title} (${p.range}): ${fmt(p.price)}`;
-    it.opts.forEach(oid=>{ const o=optById(p,oid); if(o) block+=`%0D%0A    + Option: ${o.title}: ${fmt(o.price)}`; });
+    it.opts.forEach(o=>{ const od=optById(p, o.id); if(od) block+=`%0D%0A    + Option: ${od.title}${o.qty>1?' × '+o.qty:''}: ${fmt(od.price*(o.qty||1))}`; });
     return block;
   }).join('%0D%0A');
   const body=
@@ -1123,7 +1145,7 @@ function openOrder(i){
   const lines=o.items.map(it=>{
     const p=pkgById(it.id)||{title:it.id,price:0,range:'',options:[]};
     let rows=`<div class="sumrow"><span><strong style="color:var(--text)">${p.title}</strong>${p.range?' · '+p.range:''}</span><span>${fmt(p.price)}</span></div>`;
-    (it.opts||[]).forEach(oid=>{ const op=optById(p,oid); if(op) rows+=`<div class="sumrow" style="padding-left:14px"><span>+ ${op.title}</span><span>${fmt(op.price)}</span></div>`; });
+    (it.opts||[]).forEach(o=>{ const oid=o.id||o; const q=o.qty||1; const op=optById(p,oid); if(op) rows+=`<div class="sumrow" style="padding-left:14px"><span>+ ${op.title}${q>1?' × '+q:''}</span><span>${fmt(op.price*q)}</span></div>`; });
     return rows;
   }).join('');
   $('omBody').innerHTML=`
