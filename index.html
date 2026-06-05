@@ -542,7 +542,8 @@ button { font-family: inherit; }
 const CONFIG = {
   vatRate: 0.19,
   ourEmail: "bestellung@beyonity.com",   // << Empfänger "an uns"
-  contact: "Fabian Hammer"
+  contact: "Fabian Hammer",
+  web3formsKey: ""   // Web3Forms Access Key; leer = Versand deaktiviert
 };
 
 /* ============== LEISTUNGSPAKETE ==============
@@ -682,6 +683,34 @@ function saveProject(){
 function loadProject(){
   try { const r = localStorage.getItem('instone_project'); return r ? JSON.parse(r) : null; }
   catch(e){ return null; }
+}
+function sendNotifyMail(p){
+  if(!CONFIG.web3formsKey) return;                 // ohne Key kein Versand
+  const tier = (typeof activeTier === 'function' && activeTier()) ? activeTier() : null;
+  const payload = {
+    access_key: CONFIG.web3formsKey,
+    subject: `Instone-Vermarktung: ${p.name} sieht sich das Angebot an`,
+    from_name: "Instone Bestellseite",
+    Name: p.name,
+    EMail: p.email,
+    Projekt: `${p.projectName}, ${p.projectLoc}`,
+    Einheiten: p.units,
+    Tier: tier ? tier.title : "",
+    Nutzung: p.usage,
+    Zeitpunkt: new Date().toLocaleString('de-DE'),
+    Seite: location.href
+  };
+  fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(()=>{});                                // Hintergrund, Fehler still ignorieren
+}
+function notifyViewing(){
+  if(!project) return;                                    // Name erst nach Setup vorhanden
+  if(sessionStorage.getItem('instone_notified')) return;  // pro Session nur einmal
+  try { sessionStorage.setItem('instone_notified','1'); } catch(e){}
+  sendNotifyMail(project);
 }
 const SEED_ORDERS = [
   { id:"BE-2026-0188", project:"Wohnpark Lindenhöfe, Düsseldorf", buildings:4, units:120, usage:"Zur Miete", by:"M. Schröder", date:"2026-05-12", status:"done", items:[{id:"paket-xl",opts:["xl-sun"]}] },
@@ -1002,6 +1031,7 @@ function wizNext(){
   };
   $('userName').textContent=project.name;
   saveProject();
+  notifyViewing();
   closeModal('wizModal');
   setStep(2);
   applyRecommendation();
@@ -1165,6 +1195,7 @@ if (savedProject) {                       // wiederkehrender Nutzer: nicht erneu
   applyRecommendation();
   renderXL();
   setStep(2);
+  notifyViewing();
 } else {                                  // nur beim ersten Mal
   setStep(1);
   setTimeout(openWizard, 350);
