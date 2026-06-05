@@ -609,8 +609,8 @@ const POSITIONS = [
   { title:"Render-Paket", qty:"5×", icon:ICON_IMG, desc:"Bis zu 15 hochauflösende Renderings aus jeder Realtime-Tour (je nach Wohnungsgröße).", gallery:null },
   { title:"KI-Bildpaket – neu möbliert", qty:"500", desc:"500 KI-generierte Bilder auf Basis der Realtime-Touren: gleiche Architektur, in verschiedenen Stilen neu möbliert.", gallery:{ type:"image", items:AI_ITEMS } },
   { title:"Social-Media-Videoclip", qty:"1×", desc:"Animiertes Video-Rohmaterial aus den Visualisierungen für Social-Media-Kampagnen (Hochformat).", gallery:{ type:"video", items:VIDEO_ITEMS } },
-  { title:"Drohnen-Backplates", qty:"1×", icon:ICON_DRONE, desc:"Drohnenaufnahmen vor Ort als realer Hintergrund für Navigator, Touren und Visualisierungen.", gallery:null },
-  { title:"Info-Flags", qty:"10", icon:ICON_FLAG, desc:"Zehn interaktive Highlight-Marker im Navigator mit Verlinkungen zu weiteren Informationen.", gallery:null },
+  { title:"Drohnen-Backplates", qty:"1×", icon:ICON_DRONE, desc:"Drohnenaufnahmen vor Ort als realer Hintergrund für Navigator, Touren und Visualisierungen.", gallery:{ type:"image", items:[{ full:'assets/live/drone-backplates.webp', thumb:'assets/live/drone-backplates-thumb.webp', cap:'Drohnen-Backplate als realer Hintergrund im Showcase' }] } },
+  { title:"Info-Flags", qty:"10", icon:ICON_FLAG, desc:"Zehn interaktive Highlight-Marker im Navigator mit Verlinkungen zu weiteren Informationen.", gallery:{ type:"image", items:[{ full:'assets/live/infoflags.webp', thumb:'assets/live/infoflags-thumb.webp', cap:'Info-Flags im Showcase – Beispiel „Grosser Spielplatz"' }] } },
   { title:"POI-Panorama", qty:"1×", icon:ICON_POI, desc:"360°-Panorama über dem Projekt mit bis zu 15 Points of Interest aus der Umgebung.", gallery:{ type:'iframe', url:'https://sstnavigator.s3.eu-central-1.amazonaws.com/data/FB756001/poi/index.html', thumb:'assets/live/poi.webp', cap:'POI-Panorama – Live-Beispiel' } },
   { title:"Data-Dashboard 24/7", qty:"1×", icon:ICON_DASH, desc:"Echtzeit-Auswertung des Nutzerverhaltens im Navigator, rund um die Uhr zugänglich.", gallery:null },
   { title:"Service, Wartung & Updates", qty:"12 Mon.", icon:ICON_SVC, desc:"Technischer Support, Hosting, Schnittstellenpflege und regelmäßige Updates für 12 Monate.", gallery:null }
@@ -786,11 +786,11 @@ function positionCard(pos, i){
       </button>`;
   } else if(g && g.type==='iframe'){
     media = g.thumb
-      ? `<button class="pos-thumb has-gallery" onclick="openGallery(${i})" style="background-image:url('${g.thumb}')" aria-label="Live-Beispiel ${title}">
+      ? `<button class="pos-thumb has-gallery" onclick="openGallery(${i})" style="background-image:url('${g.thumb}')" aria-label="Live-Beispiel ${pos.title}">
            <span class="pos-cue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Live ansehen</span>
          </button>`
-      : `<button class="pos-thumb iframe-tile" onclick="openGallery(${i})" aria-label="Live-Beispiel ${title}">
-           <div class="pos-ic">${icon||tier.icon}</div>
+      : `<button class="pos-thumb iframe-tile" onclick="openGallery(${i})" aria-label="Live-Beispiel ${pos.title}">
+           <div class="pos-ic">${pos.icon||tier.icon}</div>
            <span class="pos-cue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Live ansehen</span>
          </button>`;
   } else {
