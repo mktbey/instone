@@ -152,7 +152,9 @@ button { font-family: inherit; }
 .opt-row .opt-main { flex: 1; min-width: 0; }
 .opt-row .opt-title { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
 .opt-row .opt-desc { display: block; font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-.opt-row .opt-price { font-size: 13px; font-weight: 700; color: var(--bey-blue); white-space: nowrap; }
+.opt-row .opt-price { display:flex; flex-direction:column; align-items:flex-end; gap:2px; font-size:14px; font-weight:800; color:var(--bey-blue); white-space:nowrap; }
+.opt-row .opt-price .op-unit, .opt-row .opt-price .op-mult { font-size:11.5px; font-weight:600; color:var(--text-muted); }
+.opt-row .opt-price .op-sum { font-size:14px; font-weight:800; color:var(--bey-blue); }
 .cart-item.opt { padding: 10px 0 10px 18px; border-left: 2px solid var(--bey-light); margin-left: 8px; }
 .cart-item.opt .ci-name { font-weight: 500; font-size: 13px; color: var(--text-body); }
 .success-check { width: 64px; height: 64px; margin: 4px auto 18px; border-radius: 50%; background: rgba(140,207,82,0.18); color: #4e7a1e; display: flex; align-items: center; justify-content: center; }
@@ -840,7 +842,9 @@ function renderXLOptions(){
              <button type="button" class="qstep" onclick="event.preventDefault();event.stopPropagation();stepOptQty('${p.id}','${o.id}',1)" aria-label="mehr">+</button>
            </span></span>`
       : '';
-    const priceLabel = (o.qty && count>1) ? `+ ${fmt(o.price)} × ${count} = ${fmt(o.price*count)}` : `+ ${fmt(o.price)}`;
+    const priceLabel = (o.qty && count>1)
+      ? `<span class="op-unit">+ ${fmt(o.price)}</span><span class="op-mult">× ${count}</span><span class="op-sum">= ${fmt(o.price*count)}</span>`
+      : `+ ${fmt(o.price)}`;
     return `<label class="opt-row ${checked?'on':''}">
       <input type="checkbox" ${checked?'checked':''} onchange="toggleOption('${p.id}','${o.id}', event)">
       <span class="opt-main"><span class="opt-title">${o.title}</span><span class="opt-desc">${o.desc}</span>${qtyField}</span>
