@@ -667,6 +667,13 @@ async function saveOrders(){
   if(!storageOK) return;
   try { await window.storage.set('instone_orders', JSON.stringify(orders), true); } catch(e){}
 }
+function saveProject(){
+  try { localStorage.setItem('instone_project', JSON.stringify(project)); } catch(e){}
+}
+function loadProject(){
+  try { const r = localStorage.getItem('instone_project'); return r ? JSON.parse(r) : null; }
+  catch(e){ return null; }
+}
 const SEED_ORDERS = [
   { id:"BE-2026-0188", project:"Wohnpark Lindenhöfe, Düsseldorf", buildings:4, units:120, usage:"Zur Miete", by:"M. Schröder", date:"2026-05-12", status:"done", items:[{id:"paket-xl",opts:["xl-sun"]}] },
   { id:"BE-2026-0204", project:"Quartier Hafenblick, Hamburg", buildings:5, units:180, usage:"Miete und Verkauf", by:"A. Berger", date:"2026-05-28", status:"progress", items:[{id:"paket-xl",opts:["xl-rts","xl-videocgi"]}] }
@@ -961,6 +968,7 @@ function wizNext(){
     buildings:+wizData.buildings, units:+wizData.units, usage:wizData.usage
   };
   $('userName').textContent=project.name;
+  saveProject();
   closeModal('wizModal');
   setStep(2);
   applyRecommendation();
@@ -1117,9 +1125,17 @@ renderXL();
 renderFAQ();
 updateCartUI();
 loadOrders();
-setStep(1);
-// Setup-Wizard beim Laden öffnen
-setTimeout(openWizard, 350);
+const savedProject = loadProject();
+if (savedProject) {                       // wiederkehrender Nutzer: nicht erneut fragen
+  project = savedProject;
+  $('userName').textContent = project.name || '—';
+  applyRecommendation();
+  renderXL();
+  setStep(2);
+} else {                                  // nur beim ersten Mal
+  setStep(1);
+  setTimeout(openWizard, 350);
+}
 </script>
 </body>
 </html>
