@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Instone Landingpage v0.10.0 -->
+<!-- Instone Landingpage v0.11.0 -->
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -495,7 +495,7 @@ button { font-family: inherit; }
 <!-- ===== CONFIRM MODAL ===== -->
 <div class="modal" id="confirmModal">
   <div class="modal-content">
-    <div class="mc-head"><h3>Anfrage gesendet ✓</h3><button class="mc-close" onclick="closeModal('confirmModal')">&times;</button></div>
+    <div class="mc-head"><h3 id="confirmTitle">Anfrage gesendet ✓</h3><button class="mc-close" onclick="closeModal('confirmModal')">&times;</button></div>
     <div class="mc-body" id="confirmBody"></div>
   </div>
 </div>
@@ -520,7 +520,7 @@ button { font-family: inherit; }
 </div>
 
 <script>
-const APP_VERSION = '0.10.0';
+const APP_VERSION = '0.11.0';
 
 /* ============== KONFIG (Platzhalter — bitte anpassen) ============== */
 const CONFIG = {
@@ -1088,8 +1088,10 @@ function wizNext(){
 }
 
 /* ============== CHECKOUT ============== */
-function checkout(){
+async function checkout(){
   if(!project || cartCount()===0) return;
+  const btn = $('checkoutBtn');
+  if(btn && btn.disabled) return;              // Doppelklick-Schutz
   const net=cartNet(), vat=net*CONFIG.vatRate, gross=net+vat;
   const items=Object.keys(cart).map(id=>({ id, opts: selectedOptIds(id).map(oid=>({ id:oid, qty: optCount(cart[id], oid) })) }));
   const order={
@@ -1099,49 +1101,71 @@ function checkout(){
     by:project.name, date:new Date().toISOString().slice(0,10),
     status:'progress', net:net, items:items, tier:selectedTierId
   };
-  // mailto vorbereiten (an Besteller + an uns)
   const lines=items.map(it=>{
     const p=pkgById(it.id);
     let block=`- ${p.title} (${p.range}): ${fmt(p.price)}`;
-    it.opts.forEach(o=>{ const od=optById(p, o.id); if(od) block+=`%0D%0A    + Option: ${od.title}${o.qty>1?' × '+o.qty:''}: ${fmt(od.price*(o.qty||1))}`; });
+    it.opts.forEach(o=>{ const od=optById(p, o.id); if(od) block+=`\n    + Option: ${od.title}${o.qty>1?' × '+o.qty:''}: ${fmt(od.price*(o.qty||1))}`; });
     return block;
-  }).join('%0D%0A');
-  const body=
-`Anfragenummer: ${order.id}%0D%0A`+
-`Besteller: ${project.name} (${project.email})%0D%0A%0D%0A`+
-`Projekt: ${project.projectName}%0D%0A`+
-`Standort: ${project.projectLoc}%0D%0A`+
-`Gebäude: ${project.buildings} · Einheiten: ${project.units}%0D%0A`+
-`%0D%0A`+
-`Pakete & Optionen:%0D%0A${lines}%0D%0A%0D%0A`+
-`Netto: ${fmt(net)}%0D%0A`+
-`MwSt (${(CONFIG.vatRate*100).toFixed(0)}%): ${fmt(vat)}%0D%0A`+
-`Gesamt (brutto): ${fmt(gross)}`;
-  const subject=`Anfrage ${order.id} – ${project.projectName}`;
-  const mailto=`mailto:${encodeURIComponent(project.email)}?cc=${encodeURIComponent(CONFIG.ourEmail)}&subject=${encodeURIComponent(subject)}&body=${body}`;
+  }).join('\n');
+  const message =
+`Anfragenummer: ${order.id}
+Besteller: ${project.name} (${project.email})
 
-  // Warenkorb leeren
-  Object.keys(cart).forEach(k=>delete cart[k]);
-  refreshXL();
-  updateCartUI();
-  closeCart();
+Projekt: ${project.projectName}
+Standort: ${project.projectLoc}
+Gebäude: ${project.buildings} · Einheiten: ${project.units}
 
-  // Erfolgsmeldung
-  $('confirmBody').innerHTML=`
-    <div class="success-check" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-    </div>
-    <p style="text-align:center;font-size:16px;color:var(--text);font-weight:600;margin-bottom:6px">Ihre Anfrage wurde erfolgreich übermittelt.</p>
-    <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65">Anfragenummer <strong style="color:var(--bey-blue)">${order.id}</strong> · Gesamt <strong>${fmt(gross)}</strong> (brutto)</p>
-    <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65;margin-top:10px">Sie erhalten im Anschluss eine <strong>schriftliche Auftragsbestätigung</strong> per E-Mail an ${project.email}. ${CONFIG.contact} meldet sich mit den nächsten Schritten.</p>
-    <div style="display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:20px">
-      <a class="btn btn-primary" style="display:inline-flex;text-decoration:none;padding:13px 26px" href="${mailto}">Bestätigungs-Mail öffnen</a>
-      <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Schließen</button>
-    </div>
-    <p style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:16px">Hinweis: In dieser Vorschau wird der Versand über Ihr E-Mail-Programm vorbereitet (an Sie & an beyonity).</p>`;
-  $('confirmModal').classList.add('open');
-  confettiBurst();
-  renderCart();
+Pakete & Optionen:
+${lines}
+
+Netto: ${fmt(net)}
+MwSt (${(CONFIG.vatRate*100).toFixed(0)}%): ${fmt(vat)}
+Gesamt (brutto): ${fmt(gross)}`;
+  const subject = "Instone Anfrage von der Bestellseite https://mktbey.github.io/instone/";
+
+  const prevText = btn ? btn.textContent : null;
+  if(btn){ btn.disabled = true; btn.textContent = 'Wird gesendet…'; }
+
+  let ok = false;
+  try {
+    const res = await fetch("https://n8n.beyonity.com/webhook/instone-anfrage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subject, message })
+    });
+    ok = res.status === 200;
+  } catch(e){ ok = false; }
+
+  if(btn){ btn.disabled = false; btn.textContent = prevText || 'Anfrage senden'; }
+
+  if(ok){
+    Object.keys(cart).forEach(k=>delete cart[k]);
+    refreshXL();
+    updateCartUI();
+    closeCart();
+    $('confirmTitle').textContent = 'Anfrage gesendet ✓';
+    $('confirmBody').innerHTML=`
+      <div class="success-check" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <p style="text-align:center;font-size:16px;color:var(--text);font-weight:600;margin-bottom:6px">Ihre Anfrage wurde erfolgreich übermittelt.</p>
+      <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65">Anfragenummer <strong style="color:var(--bey-blue)">${order.id}</strong> · Gesamt <strong>${fmt(gross)}</strong> (brutto)</p>
+      <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65;margin-top:10px">Sie erhalten im Anschluss eine <strong>schriftliche Auftragsbestätigung</strong> per E-Mail an ${project.email}. ${CONFIG.contact} meldet sich mit den nächsten Schritten.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:20px">
+        <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Schließen</button>
+      </div>`;
+    $('confirmModal').classList.add('open');
+    confettiBurst();
+    renderCart();
+  } else {
+    $('confirmTitle').textContent = 'Anfrage nicht gesendet';
+    $('confirmBody').innerHTML=`
+      <p style="text-align:center;font-size:15px;color:var(--text);line-height:1.65;margin:8px 0 4px">Anfrage konnte nicht gesendet werden, bitte später erneut versuchen.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:20px">
+        <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Schließen</button>
+      </div>`;
+    $('confirmModal').classList.add('open');
+  }
 }
 
 /* ============== FAQ ============== */

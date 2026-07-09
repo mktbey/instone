@@ -5,6 +5,19 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.11.0] - 2026-07-09
+
+### Geändert
+- Checkout sendet die Anfrage jetzt per `fetch`-POST an den n8n-Webhook `https://n8n.beyonity.com/webhook/instone-anfrage` (Payload `{ subject, message }`) statt über einen `mailto:`-Link.
+- Absende-Button wird während des Versands deaktiviert und zeigt „Wird gesendet…" (Doppelklick-Schutz).
+- Erfolgs-Modal enthält nur noch einen „Schließen"-Button.
+
+### Hinzugefügt
+- Fehlerbehandlung: Bei Netzwerkfehler oder Status ≠ 200 wird ein Hinweis „Anfrage konnte nicht gesendet werden, bitte später erneut versuchen" angezeigt und der Warenkorb bleibt erhalten.
+
+### Entfernt
+- `mailto:`-Versand und Button „Bestätigungs-Mail öffnen" im Erfolgs-Modal.
+
 ## [0.10.0] - 2026-07-09
 
 ### Geändert
