@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bestellung · beyonity × Instone Real Estate</title>
+<title>Anfrage · beyonity × Instone Real Estate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -249,22 +249,6 @@ button { font-family: inherit; }
 .qty button:hover { background: var(--bey-light); }
 .qty .n { flex: 1; text-align: center; font-weight: 700; color: var(--bey-blue); font-size: 14px; }
 
-/* ===== UNSERE BESTELLUNGEN ===== */
-.section.alt { background: var(--bg-soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.order-list { display: flex; flex-direction: column; gap: 14px; }
-.order-row { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px 24px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: box-shadow .15s, border-color .15s; }
-.order-row:hover { box-shadow: var(--shadow-md); border-color: var(--bey-light); }
-.order-row .oid { font-weight: 700; color: var(--bey-blue); font-size: 14px; min-width: 130px; }
-.order-row .oproj { flex: 1; min-width: 0; }
-.order-row .oproj .pname { font-weight: 600; font-size: 15px; }
-.order-row .oproj .pmeta { color: var(--text-muted); font-size: 13px; }
-.order-row .odate { color: var(--text-muted); font-size: 13px; white-space: nowrap; }
-.order-row .ostatus { font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; white-space: nowrap; }
-.order-row .ostatus.done { background: rgba(140,207,82,0.18); color: #4e7a1e; }
-.order-row .ostatus.progress { background: var(--bey-light-50); color: var(--bey-blue); }
-.order-row .ototal { font-weight: 800; font-size: 15px; white-space: nowrap; }
-.empty-note { color: var(--text-muted); font-size: 14px; background: #fff; border: 1px dashed var(--line); border-radius: 14px; padding: 28px; text-align: center; }
-
 /* ===== FAQ ===== */
 .faq { max-width: 820px; }
 .faq-item { border-bottom: 1px solid var(--line); }
@@ -380,8 +364,6 @@ button { font-family: inherit; }
   .stepper-wrap { padding: 20px; }
   .step .txt { display: none; }
   .step .line { margin: 0 8px; }
-  .order-row { flex-wrap: wrap; }
-  .order-row .oid { min-width: auto; }
 }
 </style>
 </head>
@@ -416,7 +398,6 @@ button { font-family: inherit; }
   </div>
   <div class="navlinks">
     <a onclick="scrollToId('pakete')">Pakete</a>
-    <a onclick="scrollToId('bestellungen')">Unsere Bestellungen</a>
     <a onclick="scrollToId('faq')">FAQ</a>
     <a onclick="openWizard()">Projekt-Setup</a>
   </div>
@@ -437,7 +418,7 @@ button { font-family: inherit; }
   <div class="stepper" id="stepper">
     <div class="step active" data-step="1"><span class="dot">1</span><span class="txt">Projektdaten eintragen</span><span class="line"></span></div>
     <div class="step" data-step="2"><span class="dot">2</span><span class="txt">Pakete auswählen</span><span class="line"></span></div>
-    <div class="step" data-step="3"><span class="dot">3</span><span class="txt">Bestellung absenden</span></div>
+    <div class="step" data-step="3"><span class="dot">3</span><span class="txt">Anfrage absenden</span></div>
   </div>
 </div>
 
@@ -450,18 +431,6 @@ button { font-family: inherit; }
       <p>Alle Leistungen im Detail – jede Position mit echten Beispielen. Tippen Sie auf ein Vorschaubild, um Beispielbilder und Clips anzusehen.</p>
     </div>
     <div id="xlView"></div>
-  </div>
-</section>
-
-<!-- ===== UNSERE BESTELLUNGEN ===== -->
-<section class="section alt" id="bestellungen">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">Verlauf</div>
-      <h2>Unsere <span class="accent">Bestellungen</span></h2>
-      <p>Übersicht aller bereits versendeten Bestellungen. Klicken Sie eine Bestellung an, um die Details einzusehen.</p>
-    </div>
-    <div class="order-list" id="orderList"></div>
   </div>
 </section>
 
@@ -523,18 +492,10 @@ button { font-family: inherit; }
   <button class="lb-nav next" onclick="galleryStep(1)" aria-label="Weiter">&#8250;</button>
 </div>
 
-<!-- ===== ORDER DETAIL MODAL ===== -->
-<div class="modal" id="orderModal">
-  <div class="modal-content">
-    <div class="mc-head"><h3 id="omTitle"></h3><button class="mc-close" onclick="closeModal('orderModal')">&times;</button></div>
-    <div class="mc-body" id="omBody"></div>
-  </div>
-</div>
-
 <!-- ===== CONFIRM MODAL ===== -->
 <div class="modal" id="confirmModal">
   <div class="modal-content">
-    <div class="mc-head"><h3>Bestellung gesendet ✓</h3><button class="mc-close" onclick="closeModal('confirmModal')">&times;</button></div>
+    <div class="mc-head"><h3>Anfrage gesendet ✓</h3><button class="mc-close" onclick="closeModal('confirmModal')">&times;</button></div>
     <div class="mc-body" id="confirmBody"></div>
   </div>
 </div>
@@ -550,7 +511,7 @@ button { font-family: inherit; }
     <button class="ch-close" onclick="toggleChat()" aria-label="Schließen">&times;</button>
   </div>
   <div class="chat-body" id="chatBody">
-    <div class="msg bot">Hallo! Haben Sie eine Frage zu Ihrer Bestellung oder den Paketen? Schreiben Sie mir gern.</div>
+    <div class="msg bot">Hallo! Haben Sie eine Frage zu Ihrer Anfrage oder den Paketen? Schreiben Sie mir gern.</div>
   </div>
   <div class="chat-foot">
     <input type="text" id="chatInput" placeholder="Frage eintippen…" onkeydown="if(event.key==='Enter')sendChat()">
@@ -691,8 +652,6 @@ function stepOptQty(pkgId, optId, delta){
   setOptQty(pkgId, optId, cur + delta);
 }
 function cartItemNet(id){ const p=pkgById(id); if(!p) return 0; let n=p.price; const e=cart[id]; if(e) selectedOptIds(id).forEach(oid=>{ const o=optById(p,oid); if(o) n+=o.price*optCount(e,oid); }); return n; }
-function itemNet(it){ const p=pkgById(it.id); if(!p) return 0; let n=p.price; (it.opts||[]).forEach(o=>{ const oid=o.id||o; const q=o.qty||1; const od=optById(p,oid); if(od) n+=od.price*q; }); return n; }
-function orderNet(o){ return (o.items||[]).reduce((s,it)=>s+itemNet(it),0); }
 
 /* Passendes Tier nach Einheitenzahl ermitteln und in den Warenkorb legen. */
 function applyRecommendation(){
@@ -704,8 +663,6 @@ function applyRecommendation(){
 /* ============== STATE ============== */
 let project = null;          // ausgefülltes Setup
 const cart = {};             // id -> { opts: { optId:true } }
-let orders = [];             // Vergangenheit
-let storageOK = false;
 let autoPkgId = null;
 let selectedTierId = 'paket-xl'; // aktives Tier (Single-Select)
 
@@ -714,28 +671,7 @@ const fmt = n => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}
 const $ = id => document.getElementById(id);
 function scrollToId(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
 
-/* ============== STORAGE (persistente Artifact-Storage, mit Fallback) ============== */
-async function loadOrders(){
-  try {
-    const res = await window.storage.get('instone_orders', true);
-    orders = res && res.value ? JSON.parse(res.value) : [];
-    storageOK = true;
-  } catch(e){
-    // kein Storage verfügbar -> Beispiel-Daten im Speicher
-    orders = SEED_ORDERS.slice();
-    storageOK = false;
-  }
-  if(storageOK && orders.length === 0){
-    orders = SEED_ORDERS.slice();
-    try { await window.storage.set('instone_orders', JSON.stringify(orders), true); } catch(e){}
-  }
-  renderOrders();
-}
-async function saveOrders(){
-  renderOrders();
-  if(!storageOK) return;
-  try { await window.storage.set('instone_orders', JSON.stringify(orders), true); } catch(e){}
-}
+/* ============== STORAGE (Projekt-Persistenz) ============== */
 function saveProject(){
   try { localStorage.setItem('instone_project', JSON.stringify(project)); } catch(e){}
 }
@@ -771,11 +707,6 @@ function notifyViewing(){
   try { sessionStorage.setItem('instone_notified','1'); } catch(e){}
   sendNotifyMail(project);
 }
-const SEED_ORDERS = [
-  { id:"BE-2026-0188", project:"Wohnpark Lindenhöfe, Düsseldorf", buildings:4, units:120, usage:"Zur Miete", by:"M. Schröder", date:"2026-05-12", status:"done", items:[{id:"paket-xl",opts:["xl-sun"]}] },
-  { id:"BE-2026-0204", project:"Quartier Hafenblick, Hamburg", buildings:5, units:180, usage:"Miete und Verkauf", by:"A. Berger", date:"2026-05-28", status:"progress", items:[{id:"paket-xl",opts:["xl-rts","xl-videocgi"]}] }
-];
-
 /* ============== STEPPER / STATUS ============== */
 function setStep(n){
   document.querySelectorAll('#stepper .step').forEach(el=>{
@@ -786,7 +717,7 @@ function setStep(n){
   const msgs = {
     1: "<strong>Schritt 1 von 3</strong> &nbsp;·&nbsp; Bitte tragen Sie zuerst Ihre Projektdaten ein.",
     2: "<strong>Schritt 2 von 3</strong> &nbsp;·&nbsp; Wählen Sie die gewünschten Pakete für Ihr Projekt.",
-    3: "<strong>Schritt 3 von 3</strong> &nbsp;·&nbsp; Prüfen Sie den Warenkorb und senden Sie Ihre Bestellung ab."
+    3: "<strong>Schritt 3 von 3</strong> &nbsp;·&nbsp; Prüfen Sie den Warenkorb und senden Sie Ihre Anfrage ab."
   };
   $('statusBar').innerHTML = msgs[n];
 }
@@ -1102,9 +1033,9 @@ document.addEventListener('keydown', e=>{
 
 /* ============== WIZARD ============== */
 const wizSteps=[
-  { key:'name', label:'Ihr Name & Kontakt', title:'Wie ist Ihr Name?', sub:'Damit wir die Bestellung und Auftragsbestätigung korrekt zuordnen können.',
+  { key:'name', label:'Ihr Name & Kontakt', title:'Wie ist Ihr Name?', sub:'Damit wir die Anfrage und Auftragsbestätigung korrekt zuordnen können.',
     fields:[{k:'name',l:'Name',t:'text',ph:'Vor- und Nachname'},{k:'email',l:'E-Mail',t:'email',ph:'name@instone.de'}] },
-  { key:'proj', label:'Projektdaten', title:'Projektdaten', sub:'Zu welchem Projekt gehört diese Bestellung?',
+  { key:'proj', label:'Projektdaten', title:'Projektdaten', sub:'Zu welchem Projekt gehört diese Anfrage?',
     fields:[{k:'projectName',l:'Projektname',t:'text',ph:'z. B. Wohnpark Lindenhöfe'},{k:'projectLoc',l:'Standort / Adresse',t:'text',ph:'Straße, PLZ Ort'}] },
   { key:'buildings', label:'Anzahl Gebäude', title:'Anzahl der Gebäude', sub:'Wie viele Gebäude umfasst das Projekt?',
     fields:[{k:'buildings',l:'Anzahl Gebäude',t:'number',ph:'z. B. 3'}] },
@@ -1168,9 +1099,6 @@ function checkout(){
     by:project.name, date:new Date().toISOString().slice(0,10),
     status:'progress', net:net, items:items, tier:selectedTierId
   };
-  orders.unshift(order);
-  saveOrders();
-
   // mailto vorbereiten (an Besteller + an uns)
   const lines=items.map(it=>{
     const p=pkgById(it.id);
@@ -1179,7 +1107,7 @@ function checkout(){
     return block;
   }).join('%0D%0A');
   const body=
-`Bestellnummer: ${order.id}%0D%0A`+
+`Anfragenummer: ${order.id}%0D%0A`+
 `Besteller: ${project.name} (${project.email})%0D%0A%0D%0A`+
 `Projekt: ${project.projectName}%0D%0A`+
 `Standort: ${project.projectLoc}%0D%0A`+
@@ -1189,7 +1117,7 @@ function checkout(){
 `Netto: ${fmt(net)}%0D%0A`+
 `MwSt (${(CONFIG.vatRate*100).toFixed(0)}%): ${fmt(vat)}%0D%0A`+
 `Gesamt (brutto): ${fmt(gross)}`;
-  const subject=`Bestellung ${order.id} – ${project.projectName}`;
+  const subject=`Anfrage ${order.id} – ${project.projectName}`;
   const mailto=`mailto:${encodeURIComponent(project.email)}?cc=${encodeURIComponent(CONFIG.ourEmail)}&subject=${encodeURIComponent(subject)}&body=${body}`;
 
   // Warenkorb leeren
@@ -1203,8 +1131,8 @@ function checkout(){
     <div class="success-check" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <p style="text-align:center;font-size:16px;color:var(--text);font-weight:600;margin-bottom:6px">Ihre Bestellung wurde erfolgreich übermittelt.</p>
-    <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65">Bestellnummer <strong style="color:var(--bey-blue)">${order.id}</strong> · Gesamt <strong>${fmt(gross)}</strong> (brutto)</p>
+    <p style="text-align:center;font-size:16px;color:var(--text);font-weight:600;margin-bottom:6px">Ihre Anfrage wurde erfolgreich übermittelt.</p>
+    <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65">Anfragenummer <strong style="color:var(--bey-blue)">${order.id}</strong> · Gesamt <strong>${fmt(gross)}</strong> (brutto)</p>
     <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65;margin-top:10px">Sie erhalten im Anschluss eine <strong>schriftliche Auftragsbestätigung</strong> per E-Mail an ${project.email}. ${CONFIG.contact} meldet sich mit den nächsten Schritten.</p>
     <div style="display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:20px">
       <a class="btn btn-primary" style="display:inline-flex;text-decoration:none;padding:13px 26px" href="${mailto}">Bestätigungs-Mail öffnen</a>
@@ -1216,52 +1144,9 @@ function checkout(){
   renderCart();
 }
 
-/* ============== UNSERE BESTELLUNGEN ============== */
-function renderOrders(){
-  const el=$('orderList');
-  if(!orders || orders.length===0){ el.innerHTML=`<div class="empty-note">Noch keine Bestellungen versendet.</div>`; return; }
-  el.innerHTML=orders.map((o,i)=>{
-    const gross=orderNet(o)*(1+CONFIG.vatRate);
-    const st = o.status==='done'
-      ? '<span class="ostatus done">Abgeschlossen</span>'
-      : '<span class="ostatus progress">In Bearbeitung</span>';
-    return `<div class="order-row" onclick="openOrder(${i})">
-      <span class="oid">${o.id}</span>
-      <div class="oproj"><div class="pname">${o.project}</div><div class="pmeta">${o.buildings} Gebäude · ${o.units} Einheiten</div></div>
-      <span class="odate">${o.date}</span>
-      ${st}
-      <span class="ototal">${fmt(gross)}</span>
-    </div>`;
-  }).join('');
-}
-function openOrder(i){
-  const o=orders[i]; const net=orderNet(o), vat=net*CONFIG.vatRate, gross=net+vat;
-  $('omTitle').textContent='Bestellung '+o.id;
-  const lines=o.items.map(it=>{
-    const p=pkgById(it.id)||{title:it.id,price:0,range:'',options:[]};
-    let rows=`<div class="sumrow"><span><strong style="color:var(--text)">${p.title}</strong>${p.range?' · '+p.range:''}</span><span>${fmt(p.price)}</span></div>`;
-    (it.opts||[]).forEach(o=>{ const oid=o.id||o; const q=o.qty||1; const op=optById(p,oid); if(op) rows+=`<div class="sumrow" style="padding-left:14px"><span>+ ${op.title}${q>1?' × '+q:''}</span><span>${fmt(op.price*q)}</span></div>`; });
-    return rows;
-  }).join('');
-  $('omBody').innerHTML=`
-    <div style="font-size:14px;color:var(--text-body);line-height:1.9;margin-bottom:18px">
-      <div><strong style="color:var(--text)">Projekt:</strong> ${o.project}</div>
-      <div><strong style="color:var(--text)">Gebäude / Einheiten:</strong> ${o.buildings} / ${o.units}</div>
-      <div><strong style="color:var(--text)">Besteller:</strong> ${o.by}</div>
-      <div><strong style="color:var(--text)">Datum:</strong> ${o.date}</div>
-    </div>
-    <div style="border-top:1px solid var(--line);padding-top:14px">
-      ${lines}
-      <div class="sumrow" style="margin-top:10px"><span>Netto</span><span>${fmt(net)}</span></div>
-      <div class="sumrow"><span>MwSt (${(CONFIG.vatRate*100).toFixed(0)} %)</span><span>${fmt(vat)}</span></div>
-      <div class="sumrow total"><span class="lbl">Gesamt (brutto)</span><span>${fmt(gross)}</span></div>
-    </div>`;
-  $('orderModal').classList.add('open');
-}
-
 /* ============== FAQ ============== */
 const FAQ=[
-  { q:"Was passiert als Nächstes?", a:`Nach dem Absenden prüfen wir Ihre Bestellung und senden Ihnen eine schriftliche Auftragsbestätigung per E-Mail. Anschließend startet ${CONFIG.contact} die Projektkoordination und meldet sich mit den nächsten Schritten bei Ihnen.` },
+  { q:"Was passiert als Nächstes?", a:`Nach dem Absenden prüfen wir Ihre Anfrage und senden Ihnen eine schriftliche Auftragsbestätigung per E-Mail. Anschließend startet ${CONFIG.contact} die Projektkoordination und meldet sich mit den nächsten Schritten bei Ihnen.` },
   { q:"Wie lange dauert die Bearbeitung?", a:"Die Bearbeitungszeit richtet sich nach Paket und Umfang. In der Regel erhalten Sie erste Ergebnisse innerhalb von 5–10 Werktagen nach vollständiger Datenübergabe. Konkrete Termine bestätigen wir mit der Auftragsbestätigung." },
   { q:"Wann bekomme ich einen Link zum Produkt?", a:"Sobald Ihre Leistungen fertiggestellt und freigegeben sind, erhalten Sie einen Zugangs-Link per E-Mail – z. B. zum 360°-Rundgang oder zum Download-Bereich Ihrer Dateien." },
   { q:"Wer ist mein Ansprechpartner?", a:`Ihr persönlicher Ansprechpartner ist <strong>${CONFIG.contact}</strong>. Sie erreichen ihn jederzeit über das Chat-Fenster unten rechts oder per E-Mail.` }
@@ -1303,7 +1188,6 @@ function closeModal(id){ $(id).classList.remove('open'); }
 renderXL();
 renderFAQ();
 updateCartUI();
-loadOrders();
 $('appVersion').textContent = 'v' + APP_VERSION;
 const savedProject = loadProject();
 if (savedProject) {                       // wiederkehrender Nutzer: nicht erneut fragen
