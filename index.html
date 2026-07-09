@@ -485,7 +485,7 @@ button { font-family: inherit; }
 <div class="backdrop" id="backdrop" onclick="closeAll()"></div>
 <aside class="drawer" id="drawer">
   <div class="dhead">
-    <h3>Warenkorb</h3>
+    <h3>Anfrage-Übersicht</h3>
     <button class="dclose" onclick="closeCart()" aria-label="Schließen">&times;</button>
   </div>
   <div class="ditems" id="cartItems"></div>
@@ -972,7 +972,7 @@ function renderCart(){
     <div class="sumrow"><span>zzgl. MwSt (${(CONFIG.vatRate*100).toFixed(0)} %)</span><span>${fmt(vat)}</span></div>
     <div class="sumrow total"><span class="lbl">Gesamt (brutto)</span><span>${fmt(gross)}</span></div>
     <div class="vat-note">Festpreise je Paket inkl. gewählter Optionen. Der konkrete Leistungsumfang wird mit der Auftragsbestätigung final abgestimmt.</div>
-    <button class="checkout-btn" id="checkoutBtn" ${ready?'':'disabled'} onclick="checkout()">Bestellung senden</button>
+    <button class="checkout-btn" id="checkoutBtn" ${ready?'':'disabled'} onclick="checkout()">Anfrage senden</button>
     <div class="checkout-hint">${ready ? 'Sie erhalten im Anschluss eine schriftliche Auftragsbestätigung.' : 'Bitte füllen Sie zuerst das Projekt-Setup aus.'}</div>`;
 }
 function openCart(){ renderCart(); $('drawer').classList.add('open'); $('backdrop').classList.add('open'); setStep(3); }
