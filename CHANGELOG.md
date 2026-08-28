@@ -5,6 +5,14 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.12.2] - 2026-08-28
+
+### Geändert
+- Preis-Subtext in der Paket-Kachel (`.xl-price-note`) auf „Paketpreis gemäß Instone Rahmenvertrag inkl. 15 % Rabatt auf Listenpreis" umgestellt (HTML-Default + JS-Fallback in `refreshXL()` — greift für alle Tiers L/XL/XXL).
+- Cart-Drawer-Hinweis unter dem Anfrage-Senden-Button auf „Sie erhalten im Anschluss innerhalb von 24 h ein ordentliches Angebot zur Freigabe." aktualisiert.
+- `.checkout-hint` Schriftgröße 12 px → 14 px.
+- `.xl-pricebox` `min-width` 220 px → 260 px, `max-width: 320px` als Deckel; `.xl-price-note` bekommt `line-height: 1.45` und `min-height: 2.9em`, damit der Wrap des längeren Textes das Layout nicht springen lässt.
+
 ## [0.12.1] - 2026-08-28
 
 ### Geändert
