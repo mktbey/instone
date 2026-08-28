@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Instone Landingpage v0.11.0 -->
+<!-- Instone Landingpage v0.12.0 -->
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -317,6 +317,27 @@ button { font-family: inherit; }
 .wiz-foot .btn-ghost { padding: 12px 24px; }
 .wiz-foot .spacer { flex: 1; }
 
+/* ===== SETUP FORM (single-view) ===== */
+.setup-wiz { max-width: 640px; width: 100%; }
+.setup-title { font-size: 24px; margin: 12px 0 8px; }
+.setup-sub { color: var(--text-body); font-size: 14px; margin-bottom: 6px; }
+.setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; margin-top: 4px; }
+.setup-grid .field { margin-bottom: 0; }
+.setup-grid .field.full { grid-column: 1 / -1; }
+.field textarea { width: 100%; padding: 13px 16px; border: 1px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--text); background: #fff; transition: border-color .15s; resize: vertical; line-height: 1.5; }
+.field textarea:focus { outline: none; border-color: var(--bey-blue); }
+.field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--ins-pink); }
+.field .hint { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+.field.invalid .hint { color: var(--ins-pink); }
+.checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; }
+.checkbox-label input { width: 17px; height: 17px; accent-color: var(--bey-blue); cursor: pointer; margin: 0; }
+@media (max-width: 640px) { .setup-grid { grid-template-columns: 1fr; } }
+
+/* Brand as button */
+.topnav .brand { background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; transition: opacity .15s; }
+.topnav .brand:hover { opacity: 0.78; }
+.topnav .brand:focus-visible { outline: 2px solid var(--bey-blue); outline-offset: 4px; border-radius: 6px; }
+
 /* ===== CHATBOT ===== */
 .chat-fab { position: fixed; bottom: 28px; right: 28px; width: 60px; height: 60px; border-radius: 50%; background: var(--bey-blue); color: #fff; border: none; cursor: pointer; box-shadow: var(--shadow-lg); z-index: 80; display: flex; align-items: center; justify-content: center; transition: transform .15s, background .15s; }
 .chat-fab:hover { transform: scale(1.06); background: var(--bey-blue-deep); }
@@ -371,7 +392,7 @@ button { font-family: inherit; }
 
 <!-- ===== TOP NAV ===== -->
 <nav class="topnav">
-  <div class="brand">
+  <button type="button" class="brand" onclick="openSetup()" aria-label="Zum Projektsetup">
     <!-- beyonity logo -->
     <svg class="bey-logo-svg" viewBox="0 0 185.5 27.6" xmlns="http://www.w3.org/2000/svg">
       <g fill="#3C57E1">
@@ -395,14 +416,14 @@ button { font-family: inherit; }
       <text x="176" y="90" font-family="Sora, sans-serif" font-weight="700" font-size="84" fill="#1b3aa0" letter-spacing="-2">Instone</text>
       <text x="178" y="138" font-family="Sora, sans-serif" font-weight="500" font-size="40" fill="#1b3aa0" letter-spacing="0">Real Estate</text>
     </svg>
-  </div>
+  </button>
   <div class="navlinks">
     <a onclick="scrollToId('pakete')">Pakete</a>
     <a onclick="scrollToId('faq')">FAQ</a>
-    <a onclick="openWizard()">Projekt-Setup</a>
+    <a onclick="openSetup()">Projekt-Setup</a>
   </div>
   <div class="right">
-    <div class="user"><span class="label">Angemeldet als</span><span class="name" id="userName">—</span></div>
+    <div class="user"><span class="label">Projekt</span><span class="name" id="userName">—</span></div>
     <button class="cart-btn" id="cartBtn" onclick="openCart()" aria-label="Warenkorb">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
       <span class="count" id="cartCount" style="display:none">0</span>
@@ -463,19 +484,19 @@ button { font-family: inherit; }
   <div class="dfoot" id="cartFoot"></div>
 </aside>
 
-<!-- ===== WIZARD MODAL ===== -->
-<div class="modal" id="wizModal">
-  <div class="wiz">
+<!-- ===== SETUP MODAL (single view) ===== -->
+<div class="modal" id="setupModal">
+  <div class="wiz setup-wiz">
     <div class="wiz-top">
       <div class="eyebrow">Projekt-Setup</div>
-      <div class="wiz-dots" id="wizDots"></div>
-      <div class="wiz-step-label" id="wizStepLabel"></div>
+      <h3 class="setup-title">Projektdaten</h3>
+      <p class="setup-sub">Bitte tragen Sie zuerst die wichtigsten Projektdaten ein, damit wir Ihr passendes Angebot zusammenstellen können.</p>
     </div>
-    <div class="wiz-body" id="wizBody"></div>
-    <div class="wiz-foot">
-      <button class="btn btn-ghost" id="wizBack" onclick="wizPrev()">Zurück</button>
-      <div class="spacer"></div>
-      <button class="btn btn-primary" id="wizNext" onclick="wizNext()">Weiter</button>
+    <div class="wiz-body">
+      <div class="setup-grid" id="setupForm"></div>
+    </div>
+    <div class="wiz-foot" style="justify-content:flex-end">
+      <button class="btn btn-primary" id="setupSubmitBtn" onclick="setupSubmit()">Weiter zur Konfiguration →</button>
     </div>
   </div>
 </div>
@@ -520,7 +541,7 @@ button { font-family: inherit; }
 </div>
 
 <script>
-const APP_VERSION = '0.11.0';
+const APP_VERSION = '0.12.0';
 
 /* ============== KONFIG (Platzhalter — bitte anpassen) ============== */
 const CONFIG = {
@@ -583,7 +604,9 @@ function buildOptions(prefix, sunPrice){
     { id: prefix+"-lang",     title: "Mehrsprachigkeit",                 desc: "Navigator um eine weitere Sprache erweitern.",                                   price: 450 },
     { id: prefix+"-rts",      title: "Realtime-Tour S · Villa / Duplex", desc: "Virtueller Rundgang einer Villa oder Duplex-Wohnung bis 150 m².",                price: 5800, qty:true },
     { id: prefix+"-rtm",      title: "Realtime-Tour M · Villa / Duplex", desc: "Virtueller Rundgang einer Villa oder Duplex-Wohnung von 150 bis 300 m².",        price: 7800, qty:true },
+    { id: prefix+"-copytour", title: "AddOn Realtime-Tour: Copy Tour",   desc: "Kopie einer Realtime-Tour inkl. Integration anderer Backplates (Aussicht).",     price: 700,  qty:true },
     { id: prefix+"-intvis",   title: "Interior Visualization Living",    desc: "Virtuelle Innenperspektive im Bildformat (Innenvisualisierung).",                price: 1700, qty:true },
+    { id: prefix+"-plan2d",   title: "Übersichtsplan 2D",                desc: "Übersichtsplan der Bebauung in 2D, ausgeliefert als jpg- und pdf-Datei.",         price: 490 },
     { id: prefix+"-videocgi", title: "Videoclip-Project",                desc: "CGI-Video-Durchflug durch das Projekt, 60–90 Sekunden, Full HD / 1:1.",          price: 9400 }
   ];
 }
@@ -671,12 +694,12 @@ const fmt = n => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}
 const $ = id => document.getElementById(id);
 function scrollToId(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
 
-/* ============== STORAGE (Projekt-Persistenz) ============== */
+/* ============== STORAGE (Projekt-Persistenz, sessionStorage) ============== */
 function saveProject(){
-  try { localStorage.setItem('instone_project', JSON.stringify(project)); } catch(e){}
+  try { sessionStorage.setItem('instone_project', JSON.stringify(project)); } catch(e){}
 }
 function loadProject(){
-  try { const r = localStorage.getItem('instone_project'); return r ? JSON.parse(r) : null; }
+  try { const r = sessionStorage.getItem('instone_project'); return r ? JSON.parse(r) : null; }
   catch(e){ return null; }
 }
 function sendNotifyMail(p){
@@ -684,14 +707,14 @@ function sendNotifyMail(p){
   const tier = (typeof activeTier === 'function' && activeTier()) ? activeTier() : null;
   const payload = {
     access_key: CONFIG.web3formsKey,
-    subject: `Instone-Vermarktung: ${p.name} sieht sich das Angebot an`,
+    subject: `Instone-Vermarktung: Projekt ${p.projectNumber} sieht sich das Angebot an`,
     from_name: "Instone Bestellseite",
-    Name: p.name,
-    EMail: p.email,
-    Projekt: `${p.projectName}, ${p.projectLoc}`,
-    Einheiten: p.units,
+    Projektnummer: p.projectNumber,
+    Projektadresse: p.projectAddress,
+    Rechnungsadresse: p.billingSame ? '(entspricht Projektadresse)' : p.billingAddress,
+    Wohnungen: p.units,
+    Vermarktungsstart: p.marketingStart,
     Tier: tier ? tier.title : "",
-    Nutzung: p.usage,
     Zeitpunkt: new Date().toLocaleString('de-DE'),
     Seite: location.href
   };
@@ -1031,60 +1054,104 @@ document.addEventListener('keydown', e=>{
   else if(e.key==='ArrowLeft') galleryStep(-1);
 });
 
-/* ============== WIZARD ============== */
-const wizSteps=[
-  { key:'name', label:'Ihr Name & Kontakt', title:'Wie ist Ihr Name?', sub:'Damit wir die Anfrage und Auftragsbestätigung korrekt zuordnen können.',
-    fields:[{k:'name',l:'Name',t:'text',ph:'Vor- und Nachname'},{k:'email',l:'E-Mail',t:'email',ph:'name@instone.de'}] },
-  { key:'proj', label:'Projektdaten', title:'Projektdaten', sub:'Zu welchem Projekt gehört diese Anfrage?',
-    fields:[{k:'projectName',l:'Projektname',t:'text',ph:'z. B. Wohnpark Lindenhöfe'},{k:'projectLoc',l:'Standort / Adresse',t:'text',ph:'Straße, PLZ Ort'}] },
-  { key:'buildings', label:'Anzahl Gebäude', title:'Anzahl der Gebäude', sub:'Wie viele Gebäude umfasst das Projekt?',
-    fields:[{k:'buildings',l:'Anzahl Gebäude',t:'number',ph:'z. B. 3'}] },
-  { key:'units', label:'Anzahl Einheiten', title:'Anzahl der Einheiten', sub:'Wie viele Wohn- oder Gewerbeeinheiten insgesamt?',
-    fields:[{k:'units',l:'Anzahl Einheiten',t:'number',ph:'z. B. 48'}] },
-];
-let wizIdx=0; const wizData={};
+/* ============== SETUP (Single-View) ============== */
+const PROJECT_NUMBER_PATTERN = /^FG\d{5}$/;
+let setupInitial = false;   // true = Erst-Setup (Scroll + Step-Update nach Absenden)
 
-function openWizard(){ wizIdx=0; renderWiz(); $('wizModal').classList.add('open'); }
-function renderWiz(){
-  const s=wizSteps[wizIdx];
-  $('wizDots').innerHTML=wizSteps.map((_,i)=>`<div class="wd ${i<wizIdx?'done':''} ${i===wizIdx?'active':''}"></div>`).join('');
-  $('wizStepLabel').textContent=`Schritt ${wizIdx+1} von ${wizSteps.length} · ${s.label}`;
-  $('wizBody').innerHTML=`<h3>${s.title}</h3><p class="sub">${s.sub}</p>`+s.fields.map(f=>{
-    const v=wizData[f.k]||'';
-    if(f.t==='select'){
-      return `<div class="field"><label>${f.l}</label><select id="wf-${f.k}">${f.options.map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('')}</select></div>`;
-    }
-    return `<div class="field"><label>${f.l}</label><input id="wf-${f.k}" type="${f.t}" placeholder="${f.ph||''}" value="${v}" ${f.t==='number'?'min="1"':''}></div>`;
-  }).join('');
-  $('wizBack').style.visibility = wizIdx===0 ? 'hidden' : 'visible';
-  $('wizNext').textContent = wizIdx===wizSteps.length-1 ? 'Setup abschließen' : 'Weiter';
+function openSetup(initial){
+  setupInitial = !!initial;
+  renderSetup();
+  $('setupModal').classList.add('open');
+  // Fokus aufs erste Feld
+  setTimeout(()=>{ const el=$('sf-projectAddress'); if(el) el.focus(); }, 60);
 }
-function captureWiz(){ wizSteps[wizIdx].fields.forEach(f=>{ wizData[f.k]=$('wf-'+f.k).value.trim(); }); }
-function validWiz(){
-  const s=wizSteps[wizIdx];
-  for(const f of s.fields){ if(!$('wf-'+f.k).value.trim()){ $('wf-'+f.k).focus(); $('wf-'+f.k).style.borderColor='var(--ins-pink)'; return false; } }
-  return true;
+function renderSetup(){
+  const p = project || {};
+  const billingSame = p.billingSame !== false;   // default true beim ersten Öffnen
+  $('setupForm').innerHTML = `
+    <div class="field full" id="fw-projectAddress">
+      <label for="sf-projectAddress">Projektadresse *</label>
+      <textarea id="sf-projectAddress" rows="2" placeholder="Straße Nr., PLZ Ort">${p.projectAddress||''}</textarea>
+    </div>
+    <div class="field" id="fw-units">
+      <label for="sf-units">Anzahl Wohnungen *</label>
+      <input id="sf-units" type="number" min="1" step="1" placeholder="z. B. 48" value="${p.units||''}">
+    </div>
+    <div class="field" id="fw-marketingStart">
+      <label for="sf-marketingStart">Geplanter Vermarktungsstart *</label>
+      <input id="sf-marketingStart" type="month" value="${p.marketingStart||''}">
+    </div>
+    <div class="field full" id="fw-projectNumber">
+      <label for="sf-projectNumber">Instone Projektnummer *</label>
+      <input id="sf-projectNumber" type="text" placeholder="FG12345" maxlength="7" value="${p.projectNumber||''}" autocomplete="off" spellcheck="false">
+      <span class="hint">Format: FG gefolgt von 5 Ziffern (z. B. FG12345)</span>
+    </div>
+    <div class="field full">
+      <label class="checkbox-label">
+        <input type="checkbox" id="sf-billingSame" ${billingSame?'checked':''} onchange="toggleBillingSame()">
+        Rechnungsadresse entspricht Projektadresse
+      </label>
+    </div>
+    <div class="field full" id="fw-billingAddress" style="${billingSame?'display:none':''}">
+      <label for="sf-billingAddress">Rechnungsadresse *</label>
+      <textarea id="sf-billingAddress" rows="2" placeholder="Straße Nr., PLZ Ort">${p.billingAddress||''}</textarea>
+    </div>`;
 }
-function wizPrev(){ captureWiz(); if(wizIdx>0){ wizIdx--; renderWiz(); } }
-function wizNext(){
-  if(!validWiz()) return;
-  captureWiz();
-  if(wizIdx<wizSteps.length-1){ wizIdx++; renderWiz(); return; }
-  // fertig
-  project={
-    name:wizData.name, email:wizData.email,
-    projectName:wizData.projectName, projectLoc:wizData.projectLoc,
-    buildings:+wizData.buildings, units:+wizData.units
+function toggleBillingSame(){
+  const same = $('sf-billingSame').checked;
+  const wrap = $('fw-billingAddress');
+  wrap.style.display = same ? 'none' : '';
+  if(same){ wrap.classList.remove('invalid'); }
+}
+function markInvalid(id, ok){
+  const wrap = $('fw-'+id);
+  if(!wrap) return;
+  wrap.classList.toggle('invalid', !ok);
+}
+function validateSetup(){
+  const v = {
+    projectAddress: $('sf-projectAddress').value.trim(),
+    units: parseInt($('sf-units').value, 10),
+    marketingStart: $('sf-marketingStart').value.trim(),
+    projectNumber: $('sf-projectNumber').value.trim().toUpperCase(),
+    billingSame: $('sf-billingSame').checked,
+    billingAddress: $('sf-billingAddress').value.trim()
   };
-  $('userName').textContent=project.name;
+  let firstInvalid = null;
+  const check = (id, ok)=>{ markInvalid(id, ok); if(!ok && !firstInvalid) firstInvalid = 'sf-'+id; };
+  check('projectAddress', !!v.projectAddress);
+  check('units',          Number.isFinite(v.units) && v.units >= 1);
+  check('marketingStart', !!v.marketingStart);
+  check('projectNumber',  PROJECT_NUMBER_PATTERN.test(v.projectNumber));
+  check('billingAddress', v.billingSame || !!v.billingAddress);
+  if(firstInvalid){ const el=$(firstInvalid); if(el){ el.focus(); } return null; }
+  // normalisiert: Projektnummer immer uppercase gespeichert
+  $('sf-projectNumber').value = v.projectNumber;
+  return v;
+}
+function setupSubmit(){
+  const v = validateSetup();
+  if(!v) return;
+  project = {
+    projectAddress: v.projectAddress,
+    units: v.units,
+    marketingStart: v.marketingStart,
+    projectNumber: v.projectNumber,
+    billingSame: v.billingSame,
+    billingAddress: v.billingSame ? v.projectAddress : v.billingAddress
+  };
+  $('userName').textContent = project.projectNumber;
   saveProject();
   notifyViewing();
-  closeModal('wizModal');
-  setStep(2);
   applyRecommendation();
   renderXL();
-  scrollToId('pakete');
   renderCart();
+  closeModal('setupModal');
+  if(setupInitial){
+    setStep(2);
+    scrollToId('pakete');
+  }
+  setupInitial = false;
 }
 
 /* ============== CHECKOUT ============== */
@@ -1096,9 +1163,12 @@ async function checkout(){
   const items=Object.keys(cart).map(id=>({ id, opts: selectedOptIds(id).map(oid=>({ id:oid, qty: optCount(cart[id], oid) })) }));
   const order={
     id:'BE-'+new Date().getFullYear()+'-'+String(Math.floor(1000+Math.random()*8999)),
-    project:`${project.projectName}, ${project.projectLoc}`,
-    buildings:project.buildings, units:project.units,
-    by:project.name, date:new Date().toISOString().slice(0,10),
+    projectNumber: project.projectNumber,
+    projectAddress: project.projectAddress,
+    billingAddress: project.billingSame ? project.projectAddress : project.billingAddress,
+    units: project.units,
+    marketingStart: project.marketingStart,
+    date:new Date().toISOString().slice(0,10),
     status:'progress', net:net, items:items, tier:selectedTierId
   };
   const lines=items.map(it=>{
@@ -1107,13 +1177,15 @@ async function checkout(){
     it.opts.forEach(o=>{ const od=optById(p, o.id); if(od) block+=`\n    + Option: ${od.title}${o.qty>1?' × '+o.qty:''}: ${fmt(od.price*(o.qty||1))}`; });
     return block;
   }).join('\n');
+  const billLine = project.billingSame ? '(entspricht Projektadresse)' : project.billingAddress;
   const message =
 `Anfragenummer: ${order.id}
-Besteller: ${project.name} (${project.email})
+Instone Projektnummer: ${project.projectNumber}
 
-Projekt: ${project.projectName}
-Standort: ${project.projectLoc}
-Gebäude: ${project.buildings} · Einheiten: ${project.units}
+Projektadresse: ${project.projectAddress}
+Rechnungsadresse: ${billLine}
+Anzahl Wohnungen: ${project.units}
+Geplanter Vermarktungsstart: ${project.marketingStart}
 
 Pakete & Optionen:
 ${lines}
@@ -1149,8 +1221,8 @@ Gesamt (brutto): ${fmt(gross)}`;
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <p style="text-align:center;font-size:16px;color:var(--text);font-weight:600;margin-bottom:6px">Ihre Anfrage wurde erfolgreich übermittelt.</p>
-      <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65">Anfragenummer <strong style="color:var(--bey-blue)">${order.id}</strong> · Gesamt <strong>${fmt(gross)}</strong> (brutto)</p>
-      <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65;margin-top:10px">Sie erhalten im Anschluss eine <strong>schriftliche Auftragsbestätigung</strong> per E-Mail an ${project.email}. ${CONFIG.contact} meldet sich mit den nächsten Schritten.</p>
+      <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65">Anfragenummer <strong style="color:var(--bey-blue)">${order.id}</strong> · Projekt <strong>${project.projectNumber}</strong> · Gesamt <strong>${fmt(gross)}</strong> (brutto)</p>
+      <p style="text-align:center;color:var(--text-body);font-size:14px;line-height:1.65;margin-top:10px">Sie erhalten im Anschluss eine <strong>schriftliche Auftragsbestätigung</strong>. ${CONFIG.contact} meldet sich mit den nächsten Schritten.</p>
       <div style="display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:20px">
         <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Schließen</button>
       </div>`;
@@ -1170,10 +1242,12 @@ Gesamt (brutto): ${fmt(gross)}`;
 
 /* ============== FAQ ============== */
 const FAQ=[
-  { q:"Was passiert als Nächstes?", a:`Nach dem Absenden prüfen wir Ihre Anfrage und senden Ihnen eine schriftliche Auftragsbestätigung per E-Mail. Anschließend startet ${CONFIG.contact} die Projektkoordination und meldet sich mit den nächsten Schritten bei Ihnen.` },
-  { q:"Wie lange dauert die Bearbeitung?", a:"Die Bearbeitungszeit richtet sich nach Paket und Umfang. In der Regel erhalten Sie erste Ergebnisse innerhalb von 5–10 Werktagen nach vollständiger Datenübergabe. Konkrete Termine bestätigen wir mit der Auftragsbestätigung." },
-  { q:"Wann bekomme ich einen Link zum Produkt?", a:"Sobald Ihre Leistungen fertiggestellt und freigegeben sind, erhalten Sie einen Zugangs-Link per E-Mail – z. B. zum 360°-Rundgang oder zum Download-Bereich Ihrer Dateien." },
-  { q:"Wer ist mein Ansprechpartner?", a:`Ihr persönlicher Ansprechpartner ist <strong>${CONFIG.contact}</strong>. Sie erreichen ihn jederzeit über das Chat-Fenster unten rechts oder per E-Mail.` }
+  { q:"Was geschieht als Nächstes?",
+    a:"Nachdem Sie Ihre Angaben übermittelt haben, prüfen wir diese umgehend. Sie erhalten zeitnah ein maßgeschneidertes Angebot auf Basis des Instone Standard-Pakets, das bereits vorab mit der Instone Marketing-Abteilung abgestimmt wurde." },
+  { q:"Wie gebe ich das Angebot frei und starte die Aufbereitung?",
+    a:"<strong>Freigabe:</strong> Öffnen Sie einfach das Online-Angebot, das wir Ihnen nach Erhalt der Projektdaten zusenden. Oben links finden Sie den Button zur Freigabe.<br><br><strong>Start:</strong> Direkt im Anschluss erhalten Sie von uns eine Auftragsbestätigung für Ihre Unterlagen. Gleichzeitig vereinbaren wir mit Ihnen einen Termin für unser gemeinsames Kick-off-Meeting." },
+  { q:"Wie lange dauert die Aufbereitung eines Projekts?",
+    a:"Die Produktionszeit beträgt in der Regel ca. 10 Wochen, sobald uns alle erforderlichen Unterlagen vollständig vorliegen.<br><br><em>Hinweis:</em> Sollten noch gewisse Dokumente fehlen, ist das kein Problem – wir besprechen im Kick-off-Meeting gemeinsam die flexibelsten Lösungen für Sie." }
 ];
 function renderFAQ(){
   $('faqList').innerHTML=FAQ.map((f,i)=>`
@@ -1213,18 +1287,14 @@ renderXL();
 renderFAQ();
 updateCartUI();
 $('appVersion').textContent = 'v' + APP_VERSION;
+// Vorbefüllung aus Session (Reload behält Werte), Setup wird trotzdem immer zuerst gezeigt.
 const savedProject = loadProject();
-if (savedProject) {                       // wiederkehrender Nutzer: nicht erneut fragen
+if (savedProject) {
   project = savedProject;
-  $('userName').textContent = project.name || '—';
-  applyRecommendation();
-  renderXL();
-  setStep(2);
-  notifyViewing();
-} else {                                  // nur beim ersten Mal
-  setStep(1);
-  setTimeout(openWizard, 350);
+  $('userName').textContent = project.projectNumber || '—';
 }
+setStep(1);
+setTimeout(()=>openSetup(true), 350);
 </script>
 </body>
 </html>
