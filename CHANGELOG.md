@@ -5,6 +5,22 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.12.1] - 2026-08-28
+
+### Geändert
+- Projekt-Setup deutlich überarbeitet: Modal breiter (`min(92vw, 880px)`), volle Höhe scrollbar mit fixiertem Kopf und Weiter-Button, sichtbare Sektions-Überschriften (Projektdaten / Rechnungsempfänger).
+- Rechnungsempfänger-Block statt einzelnem Textfeld: Filiale, Vorname, Nachname, E-Mail, Straße, Hausnummer (Text, „12a" möglich), PLZ (genau 5 Ziffern), Ort — mit Layout Straße/Hausnummer und PLZ/Ort nebeneinander auf Desktop.
+- Setup-Intro-Text neu und größer (~1.2rem): „…gemäß Rahmenvertrag zusammenstellen können."
+- Instone Projektnummer: Pattern-/Format-Validierung entfernt, freier Text erlaubt (Feld bleibt Pflicht). Placeholder als Beispiel behalten.
+- Menüreihenfolge: Projekt-Setup steht jetzt an erster Stelle vor Pakete und FAQ.
+- Footer um vollständigen Kontaktblock ergänzt (Fabian Hammer + Beyonity Germany GmbH) mit `mailto:`, `tel:` und Website-Link.
+
+### Entfernt
+- Checkbox „Rechnungsadresse entspricht Projektadresse" (inkl. Übernahmelogik) und das kombinierte Rechnungsadress-Textfeld.
+- Kombiniertes „Name Ansprechpartner"-Feld — ersetzt durch getrennte Vorname/Nachname-Felder in Formular, sessionStorage, Absende-Payload und Zusammenfassung.
+- Hinweistext „Format: FG gefolgt von 5 Ziffern" unter der Projektnummer.
+- Chat-Widget vollständig (runder Chat-Button unten rechts, Chat-Fenster, `toggleChat`/`sendChat`, zugehöriges CSS und Markup).
+
 ## [0.12.0] - 2026-08-28
 
 ### Geändert
