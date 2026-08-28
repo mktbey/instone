@@ -5,6 +5,18 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [0.12.3] - 2026-08-28
+
+### Hinzugefügt
+- Favicon-Paket eingebunden (`assets/favicon/`: `favicon.ico`, `favicon-16/32/48.png`, `apple-touch-icon.png`, `android-chrome-192/512.png`) inkl. Icon-Links im `<head>`.
+- `site.webmanifest` im Root mit `name`, `short_name`, Icons und `theme_color`/`background_color` `#3B55E6`, `display: standalone`.
+- `<meta name="theme-color" content="#3B55E6">`.
+
+### Geändert
+- `<title>` auf „Instone Bestellmaske · beyonity" gesetzt.
+- Footer-Kontakt umgebaut auf symmetrisches Grid (`1fr auto 1fr`): mittiger 1 px Divider (weiß, 20 % Deckkraft), linker Block rechtsbündig, rechter Block linksbündig, beide 4-zeilig; Adresse rechts umgebrochen auf `Am Borsigturm 42` / `DE-13507 Berlin (Tegel)`.
+- Mobile (<640px): Divider ausgeblendet, Blöcke gestackt und zentriert.
+
 ## [0.12.2] - 2026-08-28
 
 ### Geändert

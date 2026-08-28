@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<!-- Instone Landingpage v0.12.2 -->
+<!-- Instone Landingpage v0.12.3 -->
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anfrage · beyonity × Instone Real Estate</title>
+<title>Instone Bestellmaske · beyonity</title>
+<link rel="icon" href="assets/favicon/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16.png">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#3B55E6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -383,10 +389,25 @@ button { font-family: inherit; }
 .foot .tagline { color: var(--bey-yellow); font-weight: 600; margin-bottom: 22px; }
 .foot a { color: #fff; text-decoration: none; }
 .foot a:hover { color: var(--bey-yellow); text-decoration: underline; }
-.foot-contact { display: flex; justify-content: center; gap: 56px; flex-wrap: wrap; margin-bottom: 18px; }
-.foot-block { text-align: center; }
+.foot-contact {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: 0 32px;
+  max-width: 720px;
+  margin: 0 auto 18px;
+}
+.foot-block { line-height: 1.7; }
+.foot-block.foot-left  { text-align: right; }
+.foot-block.foot-right { text-align: left; }
 .foot-block strong { color: #fff; font-weight: 700; }
-@media (max-width: 640px) { .foot-contact { gap: 24px; } }
+.foot-divider { width: 1px; background: rgba(255,255,255,0.2); align-self: stretch; }
+@media (max-width: 640px) {
+  .foot-contact { grid-template-columns: 1fr; gap: 20px 0; }
+  .foot-divider { display: none; }
+  .foot-block.foot-left,
+  .foot-block.foot-right { text-align: center; }
+}
 
 @media (max-width: 820px) {
   .topnav { padding: 14px 20px; }
@@ -480,15 +501,17 @@ button { font-family: inherit; }
 <div class="foot">
   <div class="tagline">beyonity × Instone Real Estate</div>
   <div class="foot-contact">
-    <div class="foot-block">
+    <div class="foot-block foot-left">
       <strong>Fabian Hammer</strong><br>
       Regional Director | DACH<br>
       <a href="mailto:f.hammer@beyonity.com">f.hammer@beyonity.com</a><br>
       <a href="tel:+4930340602616">T +49 030 340602616</a>
     </div>
-    <div class="foot-block">
+    <div class="foot-divider" aria-hidden="true"></div>
+    <div class="foot-block foot-right">
       Beyonity Germany GmbH<br>
-      Am Borsigturm 42, DE-13507 Berlin (Tegel)<br>
+      Am Borsigturm 42<br>
+      DE-13507 Berlin (Tegel)<br>
       <a href="https://www.beyonity.com" target="_blank" rel="noopener">www.beyonity.com</a>
     </div>
   </div>
@@ -544,7 +567,7 @@ button { font-family: inherit; }
 </div>
 
 <script>
-const APP_VERSION = '0.12.2';
+const APP_VERSION = '0.12.3';
 
 /* ============== KONFIG (Platzhalter — bitte anpassen) ============== */
 const CONFIG = {
